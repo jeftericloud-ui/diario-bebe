@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Diário da Bebê</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --rose: #F472B6;
+  --rose-light: #FDE7F3;
+  --rose-dark: #BE185D;
+  --mint: #6EE7B7;
+  --mint-dark: #059669;
+  --sky: #7DD3FC;
+  --sky-dark: #0369A1;
+  --amber: #FCD34D;
+  --amber-dark: #B45309;
+  --lavender: #C4B5FD;
+  --lav-dark: #6D28D9;
+  --bg: #FFF5F9;
+  --card: #FFFFFF;
+  --text: #1E1B4B;
+  --text-soft: #6B7280;
+  --border: #FCE7F3;
+  --shadow: 0 2px 12px rgba(244,114,182,0.12);
+  --shadow-lg: 0 8px 32px rgba(244,114,182,0.18);
+  --radius: 20px;
+  --radius-sm: 12px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 2rem; }
+.header { background: linear-gradient(135deg, #FDE7F3 0%, #EDE9FE 100%); padding: 1.5rem 1.25rem 1rem; text-align: center; border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 10; }
+.header h1 { font-size: 1.5rem; font-weight: 800; color: var(--rose-dark); letter-spacing: -0.5px; }
+.header .date-badge { display: inline-block; margin-top: 0.35rem; background: white; border: 1.5px solid var(--border); border-radius: 99px; padding: 0.25rem 1rem; font-size: 0.85rem; font-weight: 600; color: var(--text-soft); }
+.section { background: var(--card); margin: 1rem 0.75rem 0; border-radius: var(--radius); border: 1.5px solid var(--border); overflow: hidden; }
+.section-header { display: flex; align-items: center; gap: 0.6rem; padding: 1rem 1.25rem 0.75rem; border-bottom: 1.5px solid var(--border); background: #FDFAFF; }
+.section-icon { font-size: 1.4rem; line-height: 1; }
+.section-title { font-size: 1rem; font-weight: 800; color: var(--text); }
+.section-body { padding: 1rem 1.25rem; }
+.mood-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+.mood-btn { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; padding: 0.75rem 0.25rem; background: #F9FAFB; border: 2px solid #E5E7EB; border-radius: var(--radius-sm); cursor: pointer; transition: all 0.18s ease; user-select: none; -webkit-user-select: none; }
+.mood-btn .emo { font-size: 2rem; }
+.mood-btn .label { font-size: 0.7rem; font-weight: 700; color: var(--text-soft); }
+.mood-btn.selected { background: var(--rose-light); border-color: var(--rose); transform: scale(1.05); }
+.mood-btn.selected .label { color: var(--rose-dark); }
+.feed-row { display: grid; grid-template-columns: 80px 1fr 70px; gap: 0.5rem; align-items: center; margin-bottom: 0.6rem; }
+.feed-row input, .meds-row input { width: 100%; padding: 0.6rem 0.75rem; border: 1.5px solid #E5E7EB; border-radius: 10px; font-family: inherit; font-size: 0.9rem; color: var(--text); background: #FAFAFA; transition: border-color 0.2s; }
+.feed-row input:focus, .meds-row input:focus { outline: none; border-color: var(--rose); background: white; }
+.add-btn { width: 100%; margin-top: 0.5rem; padding: 0.65rem; border: 2px dashed #D1D5DB; border-radius: 10px; background: transparent; color: var(--text-soft); font-family: inherit; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: all 0.18s; }
+.add-btn:hover { border-color: var(--rose); color: var(--rose-dark); background: var(--rose-light); }
+.feed-header { display: grid; grid-template-columns: 80px 1fr 70px; gap: 0.5rem; margin-bottom: 0.4rem; }
+.feed-header span { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-soft); padding: 0 0.25rem; }
+.sleep-entry { display: grid; grid-template-columns: 1fr 1fr auto; gap: 0.5rem; align-items: center; margin-bottom: 0.6rem; background: #F9FAFB; border-radius: 12px; padding: 0.7rem; }
+.sleep-entry input[type="time"] { width: 100%; padding: 0.6rem 0.5rem; border: 1.5px solid #E5E7EB; border-radius: 10px; font-family: inherit; font-size: 0.9rem; background: white; }
+.sleep-entry input:focus { outline: none; border-color: var(--lavender); }
+.sleep-dur { font-size: 0.8rem; font-weight: 700; color: var(--lav-dark); background: #EDE9FE; padding: 0.3rem 0.5rem; border-radius: 8px; text-align: center; white-space: nowrap; }
+.del-btn { width: 32px; height: 32px; border: none; background: #FEE2E2; color: #B91C1C; border-radius: 8px; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.sleep-labels { display: grid; grid-template-columns: 1fr 1fr auto; gap: 0.5rem; margin-bottom: 0.4rem; padding: 0 0.7rem; }
+.sleep-labels span { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-soft); }
+.diaper-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.diaper-card { background: #F9FAFB; border: 1.5px solid #E5E7EB; border-radius: 14px; padding: 1rem; text-align: center; }
+.diaper-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-soft); margin-bottom: 0.5rem; }
+.diaper-count { font-size: 2.5rem; font-weight: 800; line-height: 1; margin-bottom: 0.75rem; }
+.diaper-count.pee { color: #0EA5E9; }
+.diaper-count.poo { color: #92400E; }
+.diaper-inc { width: 100%; padding: 0.65rem; border: none; border-radius: 10px; font-family: inherit; font-size: 1rem; font-weight: 800; cursor: pointer; transition: all 0.18s; touch-action: manipulation; }
+.diaper-inc.pee { background: #E0F2FE; color: #0369A1; }
+.diaper-inc.pee:active { background: #0EA5E9; color: white; transform: scale(0.97); }
+.diaper-inc.poo { background: #FEF3C7; color: #92400E; }
+.diaper-inc.poo:active { background: #F59E0B; color: white; transform: scale(0.97); }
+.diaper-dec { background: none; border: none; color: var(--text-soft); font-size: 0.8rem; cursor: pointer; margin-top: 0.3rem; padding: 0.2rem 0.5rem; border-radius: 6px; }
+.health-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem; }
+.health-field label { display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-soft); margin-bottom: 0.35rem; }
+.health-field input, .health-field select { width: 100%; padding: 0.6rem 0.75rem; border: 1.5px solid #E5E7EB; border-radius: 10px; font-family: inherit; font-size: 0.9rem; background: #FAFAFA; }
+.health-field input:focus, .health-field select:focus { outline: none; border-color: var(--sky); background: white; }
+.meds-row { display: grid; grid-template-columns: 1fr 80px 70px; gap: 0.5rem; margin-bottom: 0.5rem; align-items: center; }
+.symptom-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+.stag { padding: 0.35rem 0.75rem; background: #F3F4F6; border: 2px solid #E5E7EB; border-radius: 99px; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: all 0.15s; user-select: none; }
+.stag.on { background: #FFF7ED; border-color: #F59E0B; color: #92400E; }
+textarea { width: 100%; padding: 0.75rem; border: 1.5px solid #E5E7EB; border-radius: 12px; font-family: inherit; font-size: 0.95rem; min-height: 90px; resize: vertical; background: #FAFAFA; color: var(--text); }
+textarea:focus { outline: none; border-color: var(--rose); background: white; }
+.submit-area { padding: 1.25rem 0.75rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.btn-action { padding: 1rem; border: none; border-radius: 16px; font-family: inherit; font-size: 0.95rem; font-weight: 800; cursor: pointer; transition: all 0.2s; touch-action: manipulation; }
+.btn-action.wpp { background: #25D366; color: white; }
+.btn-action.wpp:active { transform: scale(0.97); background: #1ebe5d; }
+.btn-action.save { background: var(--rose); color: white; }
+.btn-action.save:active { transform: scale(0.97); background: var(--rose-dark); }
+.toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(100px); background: #1E1B4B; color: white; padding: 0.75rem 1.5rem; border-radius: 99px; font-size: 0.9rem; font-weight: 700; z-index: 100; transition: transform 0.3s ease; white-space: nowrap; pointer-events: none; }
+.toast.show { transform: translateX(-50%) translateY(0); }
+.tab-bar { display: grid; grid-template-columns: 1fr 1fr; margin: 0.75rem 0.75rem 0; background: white; border: 1.5px solid var(--border); border-radius: 14px; overflow: hidden; }
+.tab { padding: 0.75rem; text-align: center; font-weight: 800; font-size: 0.9rem; cursor: pointer; color: var(--text-soft); transition: all 0.18s; border: none; background: none; font-family: inherit; }
+.tab.active { background: var(--rose-light); color: var(--rose-dark); }
+#historyPanel { display: none; padding: 0.75rem; }
+.hist-item { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 1rem; margin-bottom: 0.75rem; }
+.hist-date { font-size: 0.8rem; font-weight: 700; color: var(--rose-dark); margin-bottom: 0.5rem; }
+.hist-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 0.2rem 0; color: var(--text-soft); }
+.hist-row strong { color: var(--text); font-weight: 700; }
+#setupScreen { position: fixed; inset: 0; background: var(--bg); z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1.5rem; text-align: center; overflow-y: auto; }
+#setupScreen h2 { font-size: 1.4rem; font-weight: 800; color: var(--rose-dark); margin-bottom: 0.5rem; }
+#setupScreen p { color: var(--text-soft); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.6; }
+.setup-input { width: 100%; padding: 0.9rem 1rem; border: 2px solid var(--border); border-radius: 14px; font-family: inherit; font-size: 1rem; margin-bottom: 0.75rem; background: white; }
+.setup-input:focus { outline: none; border-color: var(--rose); }
+.setup-btn { width: 100%; padding: 1rem; background: var(--rose); color: white; border: none; border-radius: 14px; font-family: inherit; font-size: 1rem; font-weight: 800; cursor: pointer; }
+.setup-hint { margin-top: 1rem; font-size: 0.8rem; color: var(--text-soft); line-height: 1.7; }
+.setup-hint a { color: var(--rose-dark); text-decoration: none; font-weight: 700; }
+.big-emoji { font-size: 3rem; margin-bottom: 1rem; }
+.checklist { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.check-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.7rem 0.75rem; background: #F9FAFB; border: 2px solid #E5E7EB; border-radius: 12px; cursor: pointer; transition: all 0.18s; user-select: none; -webkit-user-select: none; }
+.check-item.checked { background: #ECFDF5; border-color: var(--mint); }
+.check-item input { display: none; }
+.check-box { width: 22px; height: 22px; border: 2px solid #D1D5DB; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.check-item.checked .check-box { background: var(--mint-dark); border-color: var(--mint-dark); }
+.check-item.checked .check-box::after { content: '✓'; color: white; font-size: 0.8rem; font-weight: 800; }
+.check-text { font-size: 0.85rem; font-weight: 700; color: var(--text); }
+.section-sublabel { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-soft); margin: 0.75rem 0 0.4rem; }
+</style>
+</head>
+<body>
+
+<div id="setupScreen">
+  <div class="big-emoji">🍼</div>
+  <h2>Diário da Bebê</h2>
+  <p>Configure uma vez. A babá só vai usar o link direto.<br>Campos opcionais — pode pular e configurar depois.</p>
+  <input class="setup-input" id="setupBabyName" placeholder="Nome da bebê (ex: Clara)" autocomplete="off">
+  <input class="setup-input" id="setupWhatsapp" placeholder="WhatsApp dos pais com DDI (ex: 5511999999999)" type="tel" autocomplete="off">
+  <input class="setup-input" id="setupScriptUrl" placeholder="URL do Google Apps Script (opcional)" autocomplete="off" spellcheck="false">
+  <button class="setup-btn" onclick="saveSetup()">Salvar e Começar ✨</button>
+  <p class="setup-hint">
+    Para salvar na planilha automaticamente, veja o <strong>README</strong> no repositório.<br>
+    <a href="#" onclick="skipSetup(event)">Pular por agora (sem salvar na planilha)</a>
+  </p>
+</div>
+
+<div class="header">
+  <h1>🍼 Diário da Bebê</h1>
+  <div class="date-badge" id="dateBadge"></div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab active" onclick="showTab('form')">📝 Registro do Dia</button>
+  <button class="tab" onclick="showTab('history')">📋 Histórico</button>
+</div>
+
+<div id="formPanel">
+
+<div class="section">
+  <div class="section-header"><span class="section-icon">😊</span><span class="section-title">Como a bebê está?</span></div>
+  <div class="section-body">
+    <div class="mood-grid">
+      <div class="mood-btn" onclick="setMood(this,'😭 Muito chateada')"><span class="emo">😭</span><span class="label">Chateada</span></div>
+      <div class="mood-btn" onclick="setMood(this,'😐 Neutro')"><span class="emo">😐</span><span class="label">Neutro</span></div>
+      <div class="mood-btn" onclick="setMood(this,'🙂 Bem')"><span class="emo">🙂</span><span class="label">Bem</span></div>
+      <div class="mood-btn" onclick="setMood(this,'😄 Ótima!')"><span class="emo">😄</span><span class="label">Ótima!</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header"><span class="section-icon">🍼</span><span class="section-title">Alimentação</span></div>
+  <div class="section-body">
+    <div class="feed-header"><span>Horário</span><span>O que</span><span>Qtd/ml</span></div>
+    <div id="feedRows">
+      <div class="feed-row"><input type="time"><input type="text" placeholder="Mamadeira, papa…"><input type="text" placeholder="180ml"></div>
+      <div class="feed-row"><input type="time"><input type="text" placeholder="Mamadeira, papa…"><input type="text" placeholder="180ml"></div>
+    </div>
+    <button class="add-btn" onclick="addFeed()">+ Adicionar refeição</button>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header"><span class="section-icon">😴</span><span class="section-title">Sono</span></div>
+  <div class="section-body">
+    <div class="sleep-labels"><span>Dormiu</span><span>Acordou</span><span style="opacity:0">x</span></div>
+    <div id="sleepRows">
+      <div class="sleep-entry">
+        <input type="time" class="s-start" oninput="calcDur(this)">
+        <input type="time" class="s-end" oninput="calcDur(this)">
+        <span class="sleep-dur">--</span>
+      </div>
+    </div>
+    <button class="add-btn" onclick="addSleep()">+ Outro período</button>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header"><span class="section-icon">🧷</span><span class="section-title">Fraldas trocadas</span></div>
+  <div class="section-body">
+    <div class="diaper-grid">
+      <div class="diaper-card">
+        <div class="diaper-label">💛 Xixi</div>
+        <div class="diaper-count pee" id="peeCount">0</div>
+        <button class="diaper-inc pee" onclick="bump('pee',1)">+ Xixi</button>
+        <br><button class="diaper-dec" onclick="bump('pee',-1)">desfazer</button>
+      </div>
+      <div class="diaper-card">
+        <div class="diaper-label">💩 Cocô</div>
+        <div class="diaper-count poo" id="pooCount">0</div>
+        <button class="diaper-inc poo" onclick="bump('poo',1)">+ Cocô</button>
+        <br><button class="diaper-dec" onclick="bump('poo',-1)">desfazer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header"><span class="section-icon">🌡️</span><span class="section-title">Saúde</span></div>
+  <div class="section-body">
+    <div class="health-grid">
+      <div class="health-field">
+        <label>Temperatura (°C)</label>
+        <input type="number" id="temp" step="0.1" min="34" max="42" placeholder="36.5">
+      </div>
+      <div class="health-field">
+        <label>Febre?</label>
+        <select id="fever">
+          <option value="">Não mediu</option>
+          <option>Não tem</option>
+          <option>Abaixo de 38°</option>
+          <option>Acima de 38°</option>
+        </select>
+      </div>
+    </div>
+    <p class="section-sublabel">Sintomas (toque para marcar)</p>
+    <div class="symptom-tags" id="symTags">
+      <span class="stag" onclick="togSym(this)">Coriza</span>
+      <span class="stag" onclick="togSym(this)">Tosse</span>
+      <span class="stag" onclick="togSym(this)">Irritada</span>
+      <span class="stag" onclick="togSym(this)">Vômito</span>
+      <span class="stag" onclick="togSym(this)">Diarreia</span>
+      <span class="stag" onclick="togSym(this)">Gases</span>
+      <span class="stag" onclick="togSym(this)">Cólica</span>
+      <span class="stag" onclick="togSym(this)">Erupção na pele</span>
+    </div>
+    <p class="section-sublabel" style="margin-top:0.9rem">Remédios administrados</p>
+    <div id="medsRows">
+      <div class="meds-row">
+        <input type="text" placeholder="Nome do remédio">
+        <input type="text" placeholder="Dose">
+        <input type="time">
+      </div>
+    </div>
+    <button class="add-btn" onclick="addMed()">+ Remédio</button>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header"><span class="section-icon">🎉</span><span class="section-title">Atividades do dia</span></div>
+  <div class="section-body">
+    <div class="checklist">
+      <label class="check-item" onclick="togCheck(this)"><input type="checkbox" value="Banho"><div class="check-box"></div><span class="check-text">🛁 Banho</span></label>
+      <label class="check-item" onclick="togCheck(this)"><input type="checkbox" value="Brincadeiras"><div class="check-box"></div><span class="check-text">🎲 Brincadeiras</span></label>
+      <label class="check-item" onclick="togCheck(this)"><input type="checkbox" value="Passeio"><div class="check-box"></div><span class="check-text">🌳 Passeio</span></label>
+      <label class="check-item" onclick="togCheck(this)"><input type="checkbox" value="Leitura"><div class="check-box"></div><span class="check-text">📖 Leitura</span></label>
+      <label class="check-item" onclick="togCheck(this)"><input type="checkbox" value="Música"><div class="check-box"></div><span class="check-text">🎵 Música</span></label>
+      <label class="check-item" onclick="togCheck(this)"><input type="checkbox" value="Massagem"><div class="check-box"></div><span class="check-text">🤲 Massagem</span></label>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header"><span class="section-icon">📝</span><span class="section-title">Observações</span></div>
+  <div class="section-body">
+    <textarea id="notes" placeholder="Algo especial que aconteceu, comportamentos novos, dúvidas para os pais…"></textarea>
+  </div>
+</div>
+
+<div class="submit-area">
+  <button class="btn-action wpp" onclick="sendWhatsApp()">📱 Enviar WhatsApp</button>
+  <button class="btn-action save" onclick="saveRecord()">💾 Salvar Registro</button>
+</div>
+
+</div>
+
+<div id="historyPanel">
+  <div id="historyList"></div>
+  <p id="histEmpty" style="text-align:center;color:var(--text-soft);font-size:0.9rem;margin-top:2rem;display:none;">Nenhum registro ainda 🍼</p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let CFG = {};
+let mood = '';
+let pee = 0, poo = 0;
+
+function loadCfg() {
+  try { CFG = JSON.parse(localStorage.getItem('babaCfg') || '{}'); } catch(e) { CFG = {}; }
+  if (!CFG.babyName && !CFG.skipped) {
+    document.getElementById('setupScreen').style.display = 'flex';
+  } else {
+    document.getElementById('setupScreen').style.display = 'none';
+  }
+}
+
+function saveSetup() {
+  CFG.babyName = document.getElementById('setupBabyName').value.trim() || 'Bebê';
+  CFG.whatsapp = document.getElementById('setupWhatsapp').value.trim();
+  CFG.scriptUrl = document.getElementById('setupScriptUrl').value.trim();
+  CFG.skipped = false;
+  localStorage.setItem('babaCfg', JSON.stringify(CFG));
+  document.getElementById('setupScreen').style.display = 'none';
+  toast('Tudo configurado! ✨');
+}
+
+function skipSetup(e) {
+  if(e) e.preventDefault();
+  CFG.skipped = true;
+  CFG.babyName = 'Bebê';
+  localStorage.setItem('babaCfg', JSON.stringify(CFG));
+  document.getElementById('setupScreen').style.display = 'none';
+}
+
+function setDate() {
+  const now = new Date();
+  const opts = { weekday: 'long', day: '2-digit', month: 'long' };
+  document.getElementById('dateBadge').textContent = now.toLocaleDateString('pt-BR', opts);
+}
+
+function setMood(el, val) {
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  mood = val;
+}
+
+function addFeed() {
+  const row = document.createElement('div');
+  row.className = 'feed-row';
+  row.innerHTML = '<input type="time"><input type="text" placeholder="Mamadeira, papa…"><input type="text" placeholder="180ml">';
+  document.getElementById('feedRows').appendChild(row);
+}
+
+function getFeed() {
+  const out = [];
+  document.querySelectorAll('#feedRows .feed-row').forEach(r => {
+    const inputs = r.querySelectorAll('input');
+    const time = inputs[0].value, what = inputs[1].value.trim(), qty = inputs[2].value.trim();
+    if (time || what) out.push((time ? time + ' - ' : '') + what + (qty ? ' (' + qty + ')' : ''));
+  });
+  return out;
+}
+
+function addSleep() {
+  const entry = document.createElement('div');
+  entry.className = 'sleep-entry';
+  entry.innerHTML = '<input type="time" class="s-start" oninput="calcDur(this)"><input type="time" class="s-end" oninput="calcDur(this)"><span class="sleep-dur">--</span><button class="del-btn" onclick="this.parentNode.remove()">✕</button>';
+  document.getElementById('sleepRows').appendChild(entry);
+}
+
+function calcDur(inp) {
+  const entry = inp.closest('.sleep-entry');
+  const s = entry.querySelector('.s-start').value;
+  const e = entry.querySelector('.s-end').value;
+  const dur = entry.querySelector('.sleep-dur');
+  if (!s || !e) { dur.textContent = '--'; return; }
+  const [sh, sm] = s.split(':').map(Number);
+  const [eh, em] = e.split(':').map(Number);
+  let diff = (eh * 60 + em) - (sh * 60 + sm);
+  if (diff < 0) diff += 24 * 60;
+  const h = Math.floor(diff / 60), m = diff % 60;
+  dur.textContent = h > 0 ? h + 'h' + (m > 0 ? m + 'min' : '') : m + 'min';
+}
+
+function getSleep() {
+  const out = [];
+  document.querySelectorAll('#sleepRows .sleep-entry').forEach(r => {
+    const s = r.querySelector('.s-start').value;
+    const e = r.querySelector('.s-end').value;
+    const d = r.querySelector('.sleep-dur').textContent;
+    if (s && e && d !== '--') out.push(s + ' às ' + e + ' (' + d + ')');
+  });
+  return out;
+}
+
+function bump(type, n) {
+  if (type === 'pee') { pee = Math.max(0, pee + n); document.getElementById('peeCount').textContent = pee; }
+  else { poo = Math.max(0, poo + n); document.getElementById('pooCount').textContent = poo; }
+}
+
+function togSym(el) { el.classList.toggle('on'); }
+
+function getSymptoms() {
+  return [...document.querySelectorAll('.stag.on')].map(s => s.textContent).join(', ');
+}
+
+function addMed() {
+  const row = document.createElement('div');
+  row.className = 'meds-row';
+  row.innerHTML = '<input type="text" placeholder="Nome"><input type="text" placeholder="Dose"><input type="time">';
+  document.getElementById('medsRows').appendChild(row);
+}
+
+function getMeds() {
+  const out = [];
+  document.querySelectorAll('#medsRows .meds-row').forEach(r => {
+    const inputs = r.querySelectorAll('input');
+    const name = inputs[0].value.trim(), dose = inputs[1].value.trim(), time = inputs[2].value;
+    if (name) out.push(name + (dose ? ' ' + dose : '') + (time ? ' às ' + time : ''));
+  });
+  return out;
+}
+
+function togCheck(el) {
+  el.classList.toggle('checked');
+  el.querySelector('input').checked = el.classList.contains('checked');
+}
+
+function getActivities() {
+  return [...document.querySelectorAll('.check-item.checked input')].map(i => i.value).join(', ');
+}
+
+function collectData() {
+  return {
+    date: new Date().toLocaleDateString('pt-BR'),
+    time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+    mood: mood,
+    feeding: getFeed().join(' | '),
+    sleep: getSleep().join(' | '),
+    pee: pee,
+    poo: poo,
+    temp: document.getElementById('temp').value,
+    fever: document.getElementById('fever').value,
+    symptoms: getSymptoms(),
+    meds: getMeds().join(' | '),
+    activities: getActivities(),
+    notes: document.getElementById('notes').value.trim()
+  };
+}
+
+function formatMsg(d) {
+  const baby = CFG.babyName || 'Bebê';
+  let msg = '🍼 *Diário da ' + baby + ' — ' + d.date + '*\n\n';
+  if (d.mood) msg += '😊 *Humor:* ' + d.mood + '\n';
+  if (d.feeding) {
+    msg += '\n🍼 *Alimentação:*\n';
+    d.feeding.split('|').forEach(f => { if (f.trim()) msg += f.trim() + '\n'; });
+  }
+  if (d.sleep) {
+    msg += '\n😴 *Sono:*\n';
+    d.sleep.split('|').forEach(s => { if (s.trim()) msg += s.trim() + '\n'; });
+  }
+  msg += '\n🧷 *Fraldas:* ' + d.pee + ' xixi, ' + d.poo + ' cocô\n';
+  if (d.temp || d.fever) {
+    msg += '\n🌡️ *Saúde:*';
+    if (d.temp) msg += ' ' + d.temp + '°C';
+    if (d.fever && d.fever !== 'Não mediu') msg += ', febre: ' + d.fever;
+    msg += '\n';
+  }
+  if (d.symptoms) msg += '⚠️ *Sintomas:* ' + d.symptoms + '\n';
+  if (d.meds) msg += '💊 *Remédios:* ' + d.meds + '\n';
+  if (d.activities) msg += '\n✅ *Atividades:* ' + d.activities + '\n';
+  if (d.notes) msg += '\n📝 *Obs:* ' + d.notes + '\n';
+  return msg;
+}
+
+function sendWhatsApp() {
+  const d = collectData();
+  const msg = formatMsg(d);
+  const phone = CFG.whatsapp || '';
+  window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
+}
+
+async function saveRecord() {
+  const d = collectData();
+  const history = getHistory();
+  history.unshift(d);
+  localStorage.setItem('babaHistory', JSON.stringify(history.slice(0, 90)));
+  toast('Salvo! ✓');
+
+  if (CFG.scriptUrl) {
+    try {
+      const row = [d.date, d.time, d.mood, d.feeding, d.sleep, d.pee, d.poo, d.temp, d.fever, d.symptoms, d.meds, d.activities, d.notes];
+      await fetch(CFG.scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ row: row }) });
+      toast('Salvo na planilha! ✨');
+    } catch(e) {
+      toast('Salvo só localmente (planilha offline)');
+    }
+  }
+}
+
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem('babaHistory') || '[]'); } catch(e) { return []; }
+}
+
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  const empty = document.getElementById('histEmpty');
+  const history = getHistory();
+  if (!history.length) { list.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  list.innerHTML = history.map(function(d) {
+    return '<div class="hist-item">' +
+      '<div class="hist-date">📅 ' + d.date + ' às ' + d.time + '</div>' +
+      (d.mood ? '<div class="hist-row"><span>Humor</span><strong>' + d.mood + '</strong></div>' : '') +
+      (d.feeding ? '<div class="hist-row"><span>Refeições</span><strong>' + (d.feeding.split('|').filter(function(s){return s.trim();}).length) + 'x</strong></div>' : '') +
+      (d.sleep ? '<div class="hist-row"><span>Sono</span><strong>' + (d.sleep.split('|').filter(function(s){return s.trim();}).length) + ' período(s)</strong></div>' : '') +
+      '<div class="hist-row"><span>Fraldas</span><strong>' + d.pee + ' xixi · ' + d.poo + ' cocô</strong></div>' +
+      (d.symptoms ? '<div class="hist-row"><span>Sintomas</span><strong>' + d.symptoms + '</strong></div>' : '') +
+      (d.notes ? '<div class="hist-row"><span>Obs</span><strong>' + d.notes.substring(0,60) + (d.notes.length>60?'…':'') + '</strong></div>' : '') +
+      '</div>';
+  }).join('');
+}
+
+function showTab(tab) {
+  document.querySelectorAll('.tab').forEach(function(t, i) {
+    t.classList.toggle('active', (tab === 'form' && i === 0) || (tab === 'history' && i === 1));
+  });
+  document.getElementById('formPanel').style.display = tab === 'form' ? 'block' : 'none';
+  document.getElementById('historyPanel').style.display = tab === 'history' ? 'block' : 'none';
+  if (tab === 'history') renderHistory();
+}
+
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { el.classList.remove('show'); }, 2800);
+}
+
+setDate();
+loadCfg();
+</script>
+</body>
+</html>
