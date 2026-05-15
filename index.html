@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Diário da Bebê</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -13,317 +12,379 @@
   --rose-dark: #BE185D;
   --mint: #6EE7B7;
   --mint-dark: #059669;
+  --lav: #C4B5FD;
+  --lav-dark: #6D28D9;
   --sky: #7DD3FC;
   --sky-dark: #0369A1;
-  --amber: #FCD34D;
-  --amber-dark: #B45309;
-  --lavender: #C4B5FD;
-  --lav-dark: #6D28D9;
   --bg: #FFF5F9;
   --card: #FFFFFF;
   --text: #1E1B4B;
-  --text-soft: #6B7280;
+  --soft: #6B7280;
   --border: #FCE7F3;
-  --shadow: 0 2px 12px rgba(244,114,182,0.12);
-  --shadow-lg: 0 8px 32px rgba(244,114,182,0.18);
   --radius: 20px;
-  --radius-sm: 12px;
+  --rsm: 12px;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 2rem; }
-.header { background: linear-gradient(135deg, #FDE7F3 0%, #EDE9FE 100%); padding: 1.5rem 1.25rem 1rem; text-align: center; border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 10; }
-.header h1 { font-size: 1.5rem; font-weight: 800; color: var(--rose-dark); letter-spacing: -0.5px; }
-.header .date-badge { display: inline-block; margin-top: 0.35rem; background: white; border: 1.5px solid var(--border); border-radius: 99px; padding: 0.25rem 1rem; font-size: 0.85rem; font-weight: 600; color: var(--text-soft); }
-.section { background: var(--card); margin: 1rem 0.75rem 0; border-radius: var(--radius); border: 1.5px solid var(--border); overflow: hidden; }
-.section-header { display: flex; align-items: center; gap: 0.6rem; padding: 1rem 1.25rem 0.75rem; border-bottom: 1.5px solid var(--border); background: #FDFAFF; }
-.section-icon { font-size: 1.4rem; line-height: 1; }
-.section-title { font-size: 1rem; font-weight: 800; color: var(--text); }
-.section-body { padding: 1rem 1.25rem; }
-.mood-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
-.mood-btn { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; padding: 0.75rem 0.25rem; background: #F9FAFB; border: 2px solid #E5E7EB; border-radius: var(--radius-sm); cursor: pointer; transition: all 0.18s ease; user-select: none; -webkit-user-select: none; }
-.mood-btn .emo { font-size: 2rem; }
-.mood-btn .label { font-size: 0.7rem; font-weight: 700; color: var(--text-soft); }
-.mood-btn.selected { background: var(--rose-light); border-color: var(--rose); transform: scale(1.05); }
-.mood-btn.selected .label { color: var(--rose-dark); }
-.feed-row { display: grid; grid-template-columns: 80px 1fr 70px; gap: 0.5rem; align-items: center; margin-bottom: 0.6rem; }
-.feed-row input, .meds-row input { width: 100%; padding: 0.6rem 0.75rem; border: 1.5px solid #E5E7EB; border-radius: 10px; font-family: inherit; font-size: 0.9rem; color: var(--text); background: #FAFAFA; transition: border-color 0.2s; }
-.feed-row input:focus, .meds-row input:focus { outline: none; border-color: var(--rose); background: white; }
-.add-btn { width: 100%; margin-top: 0.5rem; padding: 0.65rem; border: 2px dashed #D1D5DB; border-radius: 10px; background: transparent; color: var(--text-soft); font-family: inherit; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: all 0.18s; }
-.add-btn:hover { border-color: var(--rose); color: var(--rose-dark); background: var(--rose-light); }
-.feed-header { display: grid; grid-template-columns: 80px 1fr 70px; gap: 0.5rem; margin-bottom: 0.4rem; }
-.feed-header span { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-soft); padding: 0 0.25rem; }
-.sleep-entry { display: grid; grid-template-columns: 1fr 1fr auto; gap: 0.5rem; align-items: center; margin-bottom: 0.6rem; background: #F9FAFB; border-radius: 12px; padding: 0.7rem; }
-.sleep-entry input[type="time"] { width: 100%; padding: 0.6rem 0.5rem; border: 1.5px solid #E5E7EB; border-radius: 10px; font-family: inherit; font-size: 0.9rem; background: white; }
-.sleep-entry input:focus { outline: none; border-color: var(--lavender); }
-.sleep-dur { font-size: 0.8rem; font-weight: 700; color: var(--lav-dark); background: #EDE9FE; padding: 0.3rem 0.5rem; border-radius: 8px; text-align: center; white-space: nowrap; }
-.del-btn { width: 32px; height: 32px; border: none; background: #FEE2E2; color: #B91C1C; border-radius: 8px; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.sleep-labels { display: grid; grid-template-columns: 1fr 1fr auto; gap: 0.5rem; margin-bottom: 0.4rem; padding: 0 0.7rem; }
-.sleep-labels span { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-soft); }
-.diaper-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
-.diaper-card { background: #F9FAFB; border: 1.5px solid #E5E7EB; border-radius: 14px; padding: 1rem; text-align: center; }
-.diaper-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-soft); margin-bottom: 0.5rem; }
-.diaper-count { font-size: 2.5rem; font-weight: 800; line-height: 1; margin-bottom: 0.75rem; }
-.diaper-count.pee { color: #0EA5E9; }
-.diaper-count.poo { color: #92400E; }
-.diaper-inc { width: 100%; padding: 0.65rem; border: none; border-radius: 10px; font-family: inherit; font-size: 1rem; font-weight: 800; cursor: pointer; transition: all 0.18s; touch-action: manipulation; }
-.diaper-inc.pee { background: #E0F2FE; color: #0369A1; }
-.diaper-inc.pee:active { background: #0EA5E9; color: white; transform: scale(0.97); }
-.diaper-inc.poo { background: #FEF3C7; color: #92400E; }
-.diaper-inc.poo:active { background: #F59E0B; color: white; transform: scale(0.97); }
-.diaper-dec { background: none; border: none; color: var(--text-soft); font-size: 0.8rem; cursor: pointer; margin-top: 0.3rem; padding: 0.2rem 0.5rem; border-radius: 6px; }
-.health-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem; }
-.health-field label { display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-soft); margin-bottom: 0.35rem; }
-.health-field input, .health-field select { width: 100%; padding: 0.6rem 0.75rem; border: 1.5px solid #E5E7EB; border-radius: 10px; font-family: inherit; font-size: 0.9rem; background: #FAFAFA; }
-.health-field input:focus, .health-field select:focus { outline: none; border-color: var(--sky); background: white; }
-.meds-row { display: grid; grid-template-columns: 1fr 80px 70px; gap: 0.5rem; margin-bottom: 0.5rem; align-items: center; }
-.symptom-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
-.stag { padding: 0.35rem 0.75rem; background: #F3F4F6; border: 2px solid #E5E7EB; border-radius: 99px; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: all 0.15s; user-select: none; }
-.stag.on { background: #FFF7ED; border-color: #F59E0B; color: #92400E; }
-textarea { width: 100%; padding: 0.75rem; border: 1.5px solid #E5E7EB; border-radius: 12px; font-family: inherit; font-size: 0.95rem; min-height: 90px; resize: vertical; background: #FAFAFA; color: var(--text); }
-textarea:focus { outline: none; border-color: var(--rose); background: white; }
-.submit-area { padding: 1.25rem 0.75rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
-.btn-action { padding: 1rem; border: none; border-radius: 16px; font-family: inherit; font-size: 0.95rem; font-weight: 800; cursor: pointer; transition: all 0.2s; touch-action: manipulation; }
-.btn-action.wpp { background: #25D366; color: white; }
-.btn-action.wpp:active { transform: scale(0.97); background: #1ebe5d; }
-.btn-action.save { background: var(--rose); color: white; }
-.btn-action.save:active { transform: scale(0.97); background: var(--rose-dark); }
-.toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(100px); background: #1E1B4B; color: white; padding: 0.75rem 1.5rem; border-radius: 99px; font-size: 0.9rem; font-weight: 700; z-index: 100; transition: transform 0.3s ease; white-space: nowrap; pointer-events: none; }
-.toast.show { transform: translateX(-50%) translateY(0); }
-.tab-bar { display: grid; grid-template-columns: 1fr 1fr; margin: 0.75rem 0.75rem 0; background: white; border: 1.5px solid var(--border); border-radius: 14px; overflow: hidden; }
-.tab { padding: 0.75rem; text-align: center; font-weight: 800; font-size: 0.9rem; cursor: pointer; color: var(--text-soft); transition: all 0.18s; border: none; background: none; font-family: inherit; }
-.tab.active { background: var(--rose-light); color: var(--rose-dark); }
-#historyPanel { display: none; padding: 0.75rem; }
-.hist-item { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 1rem; margin-bottom: 0.75rem; }
-.hist-date { font-size: 0.8rem; font-weight: 700; color: var(--rose-dark); margin-bottom: 0.5rem; }
-.hist-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 0.2rem 0; color: var(--text-soft); }
-.hist-row strong { color: var(--text); font-weight: 700; }
-#setupScreen { position: fixed; inset: 0; background: var(--bg); z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1.5rem; text-align: center; overflow-y: auto; }
-#setupScreen h2 { font-size: 1.4rem; font-weight: 800; color: var(--rose-dark); margin-bottom: 0.5rem; }
-#setupScreen p { color: var(--text-soft); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.6; }
-.setup-input { width: 100%; padding: 0.9rem 1rem; border: 2px solid var(--border); border-radius: 14px; font-family: inherit; font-size: 1rem; margin-bottom: 0.75rem; background: white; }
-.setup-input:focus { outline: none; border-color: var(--rose); }
-.setup-btn { width: 100%; padding: 1rem; background: var(--rose); color: white; border: none; border-radius: 14px; font-family: inherit; font-size: 1rem; font-weight: 800; cursor: pointer; }
-.setup-hint { margin-top: 1rem; font-size: 0.8rem; color: var(--text-soft); line-height: 1.7; }
-.setup-hint a { color: var(--rose-dark); text-decoration: none; font-weight: 700; }
-.big-emoji { font-size: 3rem; margin-bottom: 1rem; }
-.checklist { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
-.check-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.7rem 0.75rem; background: #F9FAFB; border: 2px solid #E5E7EB; border-radius: 12px; cursor: pointer; transition: all 0.18s; user-select: none; -webkit-user-select: none; }
-.check-item.checked { background: #ECFDF5; border-color: var(--mint); }
-.check-item input { display: none; }
-.check-box { width: 22px; height: 22px; border: 2px solid #D1D5DB; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
-.check-item.checked .check-box { background: var(--mint-dark); border-color: var(--mint-dark); }
-.check-item.checked .check-box::after { content: '✓'; color: white; font-size: 0.8rem; font-weight: 800; }
-.check-text { font-size: 0.85rem; font-weight: 700; color: var(--text); }
-.section-sublabel { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-soft); margin: 0.75rem 0 0.4rem; }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:3rem;}
+
+/* SCREENS */
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#FDE7F3,#EDE9FE);padding:1.2rem 1.25rem 0.9rem;text-align:center;border-bottom:2px solid var(--border);position:sticky;top:0;z-index:10;}
+.header h1{font-size:1.4rem;font-weight:800;color:var(--rose-dark);}
+.date-badge{display:inline-block;margin-top:0.3rem;background:white;border:1.5px solid var(--border);border-radius:99px;padding:0.2rem 1rem;font-size:0.82rem;font-weight:600;color:var(--soft);}
+
+/* TABS */
+.tab-bar{display:grid;grid-template-columns:1fr 1fr;margin:0.75rem 0.75rem 0;background:white;border:1.5px solid var(--border);border-radius:14px;overflow:hidden;}
+.tab{padding:0.7rem;text-align:center;font-weight:800;font-size:0.88rem;cursor:pointer;color:var(--soft);border:none;background:none;font-family:inherit;transition:all .18s;}
+.tab.active{background:var(--rose-light);color:var(--rose-dark);}
+
+/* SECTION */
+.section{background:var(--card);margin:0.9rem 0.75rem 0;border-radius:var(--radius);border:1.5px solid var(--border);overflow:hidden;}
+.sec-head{display:flex;align-items:center;gap:0.6rem;padding:0.9rem 1.2rem 0.7rem;border-bottom:1.5px solid var(--border);background:#FDFAFF;}
+.sec-icon{font-size:1.3rem;}
+.sec-title{font-size:0.95rem;font-weight:800;}
+.sec-body{padding:0.9rem 1.2rem;}
+.sublabel{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--soft);margin:0.8rem 0 0.4rem;}
+
+/* MOOD */
+.mood-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.45rem;}
+.mood-btn{display:flex;flex-direction:column;align-items:center;gap:0.3rem;padding:0.7rem 0.2rem;background:#F9FAFB;border:2px solid #E5E7EB;border-radius:var(--rsm);cursor:pointer;transition:all .18s;user-select:none;}
+.mood-btn .emo{font-size:1.9rem;}
+.mood-btn .lbl{font-size:0.68rem;font-weight:700;color:var(--soft);}
+.mood-btn.selected{background:var(--rose-light);border-color:var(--rose);transform:scale(1.05);}
+.mood-btn.selected .lbl{color:var(--rose-dark);}
+
+/* INPUTS */
+input[type=text],input[type=time],input[type=number],select,textarea{width:100%;padding:0.58rem 0.75rem;border:1.5px solid #E5E7EB;border-radius:10px;font-family:inherit;font-size:0.9rem;color:var(--text);background:#FAFAFA;transition:border-color .2s;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);background:white;}
+textarea{min-height:85px;resize:vertical;}
+
+/* FEED */
+.feed-head,.feed-row{display:grid;grid-template-columns:80px 1fr 70px;gap:0.45rem;margin-bottom:0.5rem;align-items:center;}
+.feed-head span{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--soft);padding:0 .2rem;}
+
+/* ADD BTN */
+.add-btn{width:100%;margin-top:0.4rem;padding:0.6rem;border:2px dashed #D1D5DB;border-radius:10px;background:transparent;color:var(--soft);font-family:inherit;font-size:0.88rem;font-weight:700;cursor:pointer;transition:all .18s;}
+.add-btn:hover{border-color:var(--rose);color:var(--rose-dark);background:var(--rose-light);}
+
+/* SLEEP */
+.sleep-labels,.sleep-entry{display:grid;grid-template-columns:1fr 1fr auto;gap:0.45rem;align-items:center;}
+.sleep-labels{margin-bottom:0.35rem;padding:0 0.6rem;}
+.sleep-labels span{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--soft);}
+.sleep-entry{margin-bottom:0.5rem;background:#F9FAFB;border-radius:12px;padding:0.6rem;}
+.sleep-dur{font-size:0.78rem;font-weight:700;color:var(--lav-dark);background:#EDE9FE;padding:0.28rem 0.45rem;border-radius:8px;text-align:center;white-space:nowrap;}
+.del-btn{width:30px;height:30px;border:none;background:#FEE2E2;color:#B91C1C;border-radius:8px;font-size:0.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* DIAPERS */
+.diaper-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;}
+.diaper-card{background:#F9FAFB;border:1.5px solid #E5E7EB;border-radius:14px;padding:0.9rem;text-align:center;}
+.diaper-label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--soft);margin-bottom:0.45rem;}
+.diaper-count{font-size:2.4rem;font-weight:800;line-height:1;margin-bottom:0.65rem;}
+.diaper-count.pee{color:#0EA5E9;}
+.diaper-count.poo{color:#92400E;}
+.diaper-inc{width:100%;padding:0.6rem;border:none;border-radius:10px;font-family:inherit;font-size:0.95rem;font-weight:800;cursor:pointer;transition:all .18s;touch-action:manipulation;}
+.diaper-inc.pee{background:#E0F2FE;color:#0369A1;}
+.diaper-inc.pee:active{background:#0EA5E9;color:white;transform:scale(.97);}
+.diaper-inc.poo{background:#FEF3C7;color:#92400E;}
+.diaper-inc.poo:active{background:#F59E0B;color:white;transform:scale(.97);}
+.diaper-dec{background:none;border:none;color:var(--soft);font-size:0.78rem;cursor:pointer;margin-top:0.25rem;padding:0.18rem 0.45rem;border-radius:6px;font-family:inherit;}
+
+/* HEALTH */
+.health-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;margin-bottom:0.7rem;}
+.health-field label{display:block;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--soft);margin-bottom:0.3rem;}
+.symptom-tags{display:flex;flex-wrap:wrap;gap:0.38rem;}
+.stag{padding:0.32rem 0.7rem;background:#F3F4F6;border:2px solid #E5E7EB;border-radius:99px;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all .15s;user-select:none;}
+.stag.on{background:#FFF7ED;border-color:#F59E0B;color:#92400E;}
+.meds-row{display:grid;grid-template-columns:1fr 75px 68px;gap:0.45rem;margin-bottom:0.45rem;align-items:center;}
+
+/* CHECKLIST */
+.checklist{display:grid;grid-template-columns:1fr 1fr;gap:0.45rem;}
+.check-item{display:flex;align-items:center;gap:0.45rem;padding:0.65rem 0.7rem;background:#F9FAFB;border:2px solid #E5E7EB;border-radius:12px;cursor:pointer;transition:all .18s;user-select:none;-webkit-user-select:none;}
+.check-item.checked{background:#ECFDF5;border-color:var(--mint);}
+.check-item input{display:none;}
+.check-box{width:20px;height:20px;border:2px solid #D1D5DB;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.check-item.checked .check-box{background:var(--mint-dark);border-color:var(--mint-dark);}
+.check-item.checked .check-box::after{content:'✓';color:white;font-size:0.75rem;font-weight:800;}
+.check-text{font-size:0.82rem;font-weight:700;}
+
+/* SUBMIT */
+.submit-area{padding:1.1rem 0.75rem;display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;}
+.btn-action{padding:0.95rem;border:none;border-radius:16px;font-family:inherit;font-size:0.92rem;font-weight:800;cursor:pointer;transition:all .2s;touch-action:manipulation;}
+.btn-action.wpp{background:#25D366;color:white;}
+.btn-action.wpp:active{transform:scale(.97);background:#1ebe5d;}
+.btn-action.save{background:var(--rose);color:white;}
+.btn-action.save:active{transform:scale(.97);background:var(--rose-dark);}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);background:#1E1B4B;color:white;padding:0.7rem 1.4rem;border-radius:99px;font-size:0.88rem;font-weight:700;z-index:999;transition:transform .3s ease;white-space:nowrap;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+/* JOSI SCREEN */
+.josi-lock{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;padding:2rem;text-align:center;gap:1rem;}
+.josi-lock .big{font-size:3rem;}
+.josi-lock h2{font-size:1.3rem;font-weight:800;color:var(--rose-dark);}
+.josi-lock p{color:var(--soft);font-size:0.9rem;}
+.josi-lock input{max-width:280px;padding:0.8rem 1rem;font-size:1rem;border:2px solid var(--border);border-radius:14px;font-family:inherit;}
+.josi-lock input:focus{outline:none;border-color:var(--rose);}
+.josi-lock button{max-width:280px;width:100%;padding:0.9rem;background:var(--rose);color:white;border:none;border-radius:14px;font-family:inherit;font-size:1rem;font-weight:800;cursor:pointer;}
+
+/* DASHBOARD */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;margin:0 0.75rem;margin-top:0.9rem;}
+.stat-card{background:white;border:1.5px solid var(--border);border-radius:16px;padding:1rem;text-align:center;}
+.stat-num{font-size:2rem;font-weight:800;color:var(--rose-dark);}
+.stat-label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--soft);margin-top:0.2rem;}
+.hist-item{background:white;border:1.5px solid var(--border);border-radius:14px;padding:1rem;margin:0 0.75rem 0.7rem;}
+.hist-date{font-size:0.78rem;font-weight:700;color:var(--rose-dark);margin-bottom:0.45rem;}
+.hist-row{display:flex;justify-content:space-between;font-size:0.83rem;padding:0.18rem 0;color:var(--soft);}
+.hist-row strong{color:var(--text);font-weight:700;}
+.dash-title{font-size:1rem;font-weight:800;color:var(--text);margin:1rem 0.75rem 0.5rem;padding-bottom:0.4rem;border-bottom:2px solid var(--border);}
+.mood-bar{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem;}
+.mood-bar-label{font-size:0.8rem;font-weight:600;color:var(--soft);width:90px;flex-shrink:0;}
+.mood-bar-fill{height:12px;border-radius:99px;transition:width .3s;}
+.mood-bar-count{font-size:0.8rem;font-weight:700;color:var(--text);margin-left:0.25rem;}
+.logout-btn{display:block;margin:0.75rem auto;background:none;border:1.5px solid #E5E7EB;border-radius:10px;padding:0.5rem 1.5rem;color:var(--soft);font-family:inherit;font-size:0.85rem;font-weight:700;cursor:pointer;}
 </style>
 </head>
 <body>
 
-<div id="setupScreen">
-  <div class="big-emoji">🍼</div>
-  <h2>Diário da Bebê</h2>
-  <p>Configure uma vez. A babá só vai usar o link direto.<br>Campos opcionais — pode pular e configurar depois.</p>
-  <input class="setup-input" id="setupBabyName" placeholder="Nome da bebê (ex: Clara)" autocomplete="off">
-  <input class="setup-input" id="setupWhatsapp" placeholder="WhatsApp dos pais com DDI (ex: 5511999999999)" type="tel" autocomplete="off">
-  <input class="setup-input" id="setupScriptUrl" placeholder="URL do Google Apps Script (opcional)" autocomplete="off" spellcheck="false">
-  <button class="setup-btn" onclick="saveSetup()">Salvar e Começar ✨</button>
-  <p class="setup-hint">
-    Para salvar na planilha automaticamente, veja o <strong>README</strong> no repositório.<br>
-    <a href="#" onclick="skipSetup(event)">Pular por agora (sem salvar na planilha)</a>
-  </p>
-</div>
-
-<div class="header">
-  <h1>🍼 Diário da Bebê</h1>
-  <div class="date-badge" id="dateBadge"></div>
-</div>
-
-<div class="tab-bar">
-  <button class="tab active" onclick="showTab('form')">📝 Registro do Dia</button>
-  <button class="tab" onclick="showTab('history')">📋 Histórico</button>
-</div>
-
-<div id="formPanel">
-
-<div class="section">
-  <div class="section-header"><span class="section-icon">😊</span><span class="section-title">Como a bebê está?</span></div>
-  <div class="section-body">
-    <div class="mood-grid">
-      <div class="mood-btn" onclick="setMood(this,'😭 Muito chateada')"><span class="emo">😭</span><span class="label">Chateada</span></div>
-      <div class="mood-btn" onclick="setMood(this,'😐 Neutro')"><span class="emo">😐</span><span class="label">Neutro</span></div>
-      <div class="mood-btn" onclick="setMood(this,'🙂 Bem')"><span class="emo">🙂</span><span class="label">Bem</span></div>
-      <div class="mood-btn" onclick="setMood(this,'😄 Ótima!')"><span class="emo">😄</span><span class="label">Ótima!</span></div>
-    </div>
+<!-- ===== BABA SCREEN ===== -->
+<div id="screenBaba" class="screen active">
+  <div class="header">
+    <h1>🍼 Diário da Bebê</h1>
+    <div class="date-badge" id="dateBadge"></div>
   </div>
-</div>
 
-<div class="section">
-  <div class="section-header"><span class="section-icon">🍼</span><span class="section-title">Alimentação</span></div>
-  <div class="section-body">
-    <div class="feed-header"><span>Horário</span><span>O que</span><span>Qtd/ml</span></div>
-    <div id="feedRows">
-      <div class="feed-row"><input type="time"><input type="text" placeholder="Mamadeira, papa…"><input type="text" placeholder="180ml"></div>
-      <div class="feed-row"><input type="time"><input type="text" placeholder="Mamadeira, papa…"><input type="text" placeholder="180ml"></div>
-    </div>
-    <button class="add-btn" onclick="addFeed()">+ Adicionar refeição</button>
+  <div class="tab-bar">
+    <button class="tab active" onclick="babaTab('form',this)">📝 Registro</button>
+    <button class="tab" onclick="babaTab('hist',this)">📋 Histórico</button>
   </div>
-</div>
 
-<div class="section">
-  <div class="section-header"><span class="section-icon">😴</span><span class="section-title">Sono</span></div>
-  <div class="section-body">
-    <div class="sleep-labels"><span>Dormiu</span><span>Acordou</span><span style="opacity:0">x</span></div>
-    <div id="sleepRows">
-      <div class="sleep-entry">
-        <input type="time" class="s-start" oninput="calcDur(this)">
-        <input type="time" class="s-end" oninput="calcDur(this)">
-        <span class="sleep-dur">--</span>
+  <!-- FORM TAB -->
+  <div id="babaForm">
+
+    <div class="section">
+      <div class="sec-head"><span class="sec-icon">😊</span><span class="sec-title">Como a bebê está?</span></div>
+      <div class="sec-body">
+        <div class="mood-grid">
+          <div class="mood-btn" onclick="setMood(this,'😭 Muito chateada')"><span class="emo">😭</span><span class="lbl">Chateada</span></div>
+          <div class="mood-btn" onclick="setMood(this,'😐 Neutro')"><span class="emo">😐</span><span class="lbl">Neutro</span></div>
+          <div class="mood-btn" onclick="setMood(this,'🙂 Bem')"><span class="emo">🙂</span><span class="lbl">Bem</span></div>
+          <div class="mood-btn" onclick="setMood(this,'😄 Ótima!')"><span class="emo">😄</span><span class="lbl">Ótima!</span></div>
+        </div>
       </div>
     </div>
-    <button class="add-btn" onclick="addSleep()">+ Outro período</button>
+
+    <div class="section">
+      <div class="sec-head"><span class="sec-icon">🍼</span><span class="sec-title">Alimentação</span></div>
+      <div class="sec-body">
+        <div class="feed-head"><span>Horário</span><span>O que</span><span>Qtd</span></div>
+        <div id="feedRows">
+          <div class="feed-row"><input type="time"><input type="text" placeholder="Mamadeira, papa…"><input type="text" placeholder="180ml"></div>
+          <div class="feed-row"><input type="time"><input type="text" placeholder="Mamadeira, papa…"><input type="text" placeholder="180ml"></div>
+        </div>
+        <button class="add-btn" onclick="addFeed()">+ Adicionar refeição</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-head"><span class="sec-icon">😴</span><span class="sec-title">Sono</span></div>
+      <div class="sec-body">
+        <div class="sleep-labels"><span>Dormiu</span><span>Acordou</span><span style="opacity:0">x</span></div>
+        <div id="sleepRows">
+          <div class="sleep-entry">
+            <input type="time" class="s-start" oninput="calcDur(this)">
+            <input type="time" class="s-end" oninput="calcDur(this)">
+            <span class="sleep-dur">--</span>
+          </div>
+        </div>
+        <button class="add-btn" onclick="addSleep()">+ Outro período</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-head"><span class="sec-icon">🧷</span><span class="sec-title">Fraldas trocadas</span></div>
+      <div class="sec-body">
+        <div class="diaper-grid">
+          <div class="diaper-card">
+            <div class="diaper-label">💛 Xixi</div>
+            <div class="diaper-count pee" id="peeCount">0</div>
+            <button class="diaper-inc pee" onclick="bump('pee',1)">+ Xixi</button>
+            <br><button class="diaper-dec" onclick="bump('pee',-1)">desfazer</button>
+          </div>
+          <div class="diaper-card">
+            <div class="diaper-label">💩 Cocô</div>
+            <div class="diaper-count poo" id="pooCount">0</div>
+            <button class="diaper-inc poo" onclick="bump('poo',1)">+ Cocô</button>
+            <br><button class="diaper-dec" onclick="bump('poo',-1)">desfazer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-head"><span class="sec-icon">🌡️</span><span class="sec-title">Saúde</span></div>
+      <div class="sec-body">
+        <div class="health-grid">
+          <div class="health-field"><label>Temperatura (°C)</label><input type="number" id="temp" step="0.1" min="34" max="42" placeholder="36.5"></div>
+          <div class="health-field"><label>Febre?</label>
+            <select id="fever"><option value="">Não mediu</option><option>Não tem</option><option>Abaixo de 38°</option><option>Acima de 38°</option></select>
+          </div>
+        </div>
+        <p class="sublabel">Sintomas</p>
+        <div class="symptom-tags">
+          <span class="stag" onclick="this.classList.toggle('on')">Coriza</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Tosse</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Irritada</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Vômito</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Diarreia</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Gases</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Cólica</span>
+          <span class="stag" onclick="this.classList.toggle('on')">Erupção</span>
+        </div>
+        <p class="sublabel" style="margin-top:0.9rem">Remédios</p>
+        <div id="medsRows">
+          <div class="meds-row"><input type="text" placeholder="Remédio"><input type="text" placeholder="Dose"><input type="time"></div>
+        </div>
+        <button class="add-btn" onclick="addMed()">+ Remédio</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-head"><span class="sec-icon">🎉</span><span class="sec-title">Atividades do dia</span></div>
+      <div class="sec-body">
+        <div class="checklist" id="checklist">
+          <div class="check-item" onclick="togCheck(this)" data-val="Banho"><input type="checkbox"><div class="check-box"></div><span class="check-text">🛁 Banho</span></div>
+          <div class="check-item" onclick="togCheck(this)" data-val="Brincadeiras"><input type="checkbox"><div class="check-box"></div><span class="check-text">🎲 Brincadeiras</span></div>
+          <div class="check-item" onclick="togCheck(this)" data-val="Passeio"><input type="checkbox"><div class="check-box"></div><span class="check-text">🌳 Passeio</span></div>
+          <div class="check-item" onclick="togCheck(this)" data-val="Leitura"><input type="checkbox"><div class="check-box"></div><span class="check-text">📖 Leitura</span></div>
+          <div class="check-item" onclick="togCheck(this)" data-val="Música"><input type="checkbox"><div class="check-box"></div><span class="check-text">🎵 Música</span></div>
+          <div class="check-item" onclick="togCheck(this)" data-val="Massagem"><input type="checkbox"><div class="check-box"></div><span class="check-text">🤲 Massagem</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-head"><span class="sec-icon">📝</span><span class="sec-title">Observações</span></div>
+      <div class="sec-body"><textarea id="notes" placeholder="Algo especial, comportamentos novos, dúvidas para os pais…"></textarea></div>
+    </div>
+
+    <div class="submit-area">
+      <button class="btn-action wpp" onclick="sendWhatsApp()">📱 WhatsApp</button>
+      <button class="btn-action save" onclick="saveRecord()">💾 Salvar</button>
+    </div>
+
+  </div><!-- /babaForm -->
+
+  <!-- HIST TAB -->
+  <div id="babaHist" style="display:none;padding:0.75rem;">
+    <div id="histList"></div>
+    <p id="histEmpty" style="text-align:center;color:var(--soft);font-size:0.9rem;margin-top:2rem;display:none;">Nenhum registro ainda 🍼</p>
+  </div>
+
+</div><!-- /screenBaba -->
+
+
+<!-- ===== JOSI LOCK SCREEN ===== -->
+<div id="screenJosiLock" class="screen">
+  <div class="josi-lock">
+    <div class="big">🌸</div>
+    <h2>Área da Josi</h2>
+    <p>Digite a senha para ver o painel completo</p>
+    <input type="password" id="josiPwd" placeholder="senha" onkeydown="if(event.key==='Enter')josiLogin()">
+    <button onclick="josiLogin()">Entrar</button>
+    <p style="font-size:0.75rem;color:var(--soft);margin-top:0.5rem;">Voltar para a <a href="#baba" onclick="goTo('baba')" style="color:var(--rose-dark);font-weight:700;">tela da babá</a></p>
   </div>
 </div>
 
-<div class="section">
-  <div class="section-header"><span class="section-icon">🧷</span><span class="section-title">Fraldas trocadas</span></div>
-  <div class="section-body">
-    <div class="diaper-grid">
-      <div class="diaper-card">
-        <div class="diaper-label">💛 Xixi</div>
-        <div class="diaper-count pee" id="peeCount">0</div>
-        <button class="diaper-inc pee" onclick="bump('pee',1)">+ Xixi</button>
-        <br><button class="diaper-dec" onclick="bump('pee',-1)">desfazer</button>
-      </div>
-      <div class="diaper-card">
-        <div class="diaper-label">💩 Cocô</div>
-        <div class="diaper-count poo" id="pooCount">0</div>
-        <button class="diaper-inc poo" onclick="bump('poo',1)">+ Cocô</button>
-        <br><button class="diaper-dec" onclick="bump('poo',-1)">desfazer</button>
-      </div>
-    </div>
+
+<!-- ===== JOSI DASHBOARD ===== -->
+<div id="screenJosi" class="screen">
+  <div class="header">
+    <h1>🌸 Painel da Josi</h1>
+    <div class="date-badge" id="josiDateBadge"></div>
   </div>
-</div>
 
-<div class="section">
-  <div class="section-header"><span class="section-icon">🌡️</span><span class="section-title">Saúde</span></div>
-  <div class="section-body">
-    <div class="health-grid">
-      <div class="health-field">
-        <label>Temperatura (°C)</label>
-        <input type="number" id="temp" step="0.1" min="34" max="42" placeholder="36.5">
-      </div>
-      <div class="health-field">
-        <label>Febre?</label>
-        <select id="fever">
-          <option value="">Não mediu</option>
-          <option>Não tem</option>
-          <option>Abaixo de 38°</option>
-          <option>Acima de 38°</option>
-        </select>
-      </div>
-    </div>
-    <p class="section-sublabel">Sintomas (toque para marcar)</p>
-    <div class="symptom-tags" id="symTags">
-      <span class="stag" onclick="togSym(this)">Coriza</span>
-      <span class="stag" onclick="togSym(this)">Tosse</span>
-      <span class="stag" onclick="togSym(this)">Irritada</span>
-      <span class="stag" onclick="togSym(this)">Vômito</span>
-      <span class="stag" onclick="togSym(this)">Diarreia</span>
-      <span class="stag" onclick="togSym(this)">Gases</span>
-      <span class="stag" onclick="togSym(this)">Cólica</span>
-      <span class="stag" onclick="togSym(this)">Erupção na pele</span>
-    </div>
-    <p class="section-sublabel" style="margin-top:0.9rem">Remédios administrados</p>
-    <div id="medsRows">
-      <div class="meds-row">
-        <input type="text" placeholder="Nome do remédio">
-        <input type="text" placeholder="Dose">
-        <input type="time">
-      </div>
-    </div>
-    <button class="add-btn" onclick="addMed()">+ Remédio</button>
+  <div class="dash-grid" id="statsGrid">
+    <div class="stat-card"><div class="stat-num" id="statDays">0</div><div class="stat-label">Dias registrados</div></div>
+    <div class="stat-card"><div class="stat-num" id="statPee">0</div><div class="stat-label">Xixis (média/dia)</div></div>
+    <div class="stat-card"><div class="stat-num" id="statPoo">0</div><div class="stat-label">Cocôs (média/dia)</div></div>
+    <div class="stat-card"><div class="stat-num" id="statSleep">0h</div><div class="stat-label">Sono médio/dia</div></div>
   </div>
+
+  <div class="dash-title">😊 Humor nos últimos dias</div>
+  <div style="padding:0 0.75rem;" id="moodChart"></div>
+
+  <div class="dash-title">📋 Todos os registros</div>
+  <div id="josiHistList"></div>
+
+  <button class="logout-btn" onclick="josiLogout()">Sair do painel</button>
 </div>
 
-<div class="section">
-  <div class="section-header"><span class="section-icon">🎉</span><span class="section-title">Atividades do dia</span></div>
-  <div class="section-body">
-    <div class="checklist">
-      <label class="check-item" onclick="togCheck(this)"><input type="checkbox" value="Banho"><div class="check-box"></div><span class="check-text">🛁 Banho</span></label>
-      <label class="check-item" onclick="togCheck(this)"><input type="checkbox" value="Brincadeiras"><div class="check-box"></div><span class="check-text">🎲 Brincadeiras</span></label>
-      <label class="check-item" onclick="togCheck(this)"><input type="checkbox" value="Passeio"><div class="check-box"></div><span class="check-text">🌳 Passeio</span></label>
-      <label class="check-item" onclick="togCheck(this)"><input type="checkbox" value="Leitura"><div class="check-box"></div><span class="check-text">📖 Leitura</span></label>
-      <label class="check-item" onclick="togCheck(this)"><input type="checkbox" value="Música"><div class="check-box"></div><span class="check-text">🎵 Música</span></label>
-      <label class="check-item" onclick="togCheck(this)"><input type="checkbox" value="Massagem"><div class="check-box"></div><span class="check-text">🤲 Massagem</span></label>
-    </div>
-  </div>
-</div>
-
-<div class="section">
-  <div class="section-header"><span class="section-icon">📝</span><span class="section-title">Observações</span></div>
-  <div class="section-body">
-    <textarea id="notes" placeholder="Algo especial que aconteceu, comportamentos novos, dúvidas para os pais…"></textarea>
-  </div>
-</div>
-
-<div class="submit-area">
-  <button class="btn-action wpp" onclick="sendWhatsApp()">📱 Enviar WhatsApp</button>
-  <button class="btn-action save" onclick="saveRecord()">💾 Salvar Registro</button>
-</div>
-
-</div>
-
-<div id="historyPanel">
-  <div id="historyList"></div>
-  <p id="histEmpty" style="text-align:center;color:var(--text-soft);font-size:0.9rem;margin-top:2rem;display:none;">Nenhum registro ainda 🍼</p>
-</div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-let CFG = {};
+// ===== CONFIG =====
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwsfNrpzEh5eQqtLR02QFpZI8r6IUeySRmMQ_9SNhI3kJ87XzkfpJwUn0xB1TI8UP0j/exec';
+const JOSI_PWD = 'josi123'; // troque aqui se quiser
+
+// ===== STATE =====
 let mood = '';
 let pee = 0, poo = 0;
 
-function loadCfg() {
-  try { CFG = JSON.parse(localStorage.getItem('babaCfg') || '{}'); } catch(e) { CFG = {}; }
-  if (!CFG.babyName && !CFG.skipped) {
-    document.getElementById('setupScreen').style.display = 'flex';
+// ===== ROUTING =====
+function router() {
+  const hash = location.hash;
+  if (hash === '#josi') {
+    const unlocked = sessionStorage.getItem('josiUnlocked');
+    if (unlocked) showScreen('screenJosi');
+    else showScreen('screenJosiLock');
   } else {
-    document.getElementById('setupScreen').style.display = 'none';
+    showScreen('screenBaba');
   }
 }
 
-function saveSetup() {
-  CFG.babyName = document.getElementById('setupBabyName').value.trim() || 'Bebê';
-  CFG.whatsapp = document.getElementById('setupWhatsapp').value.trim();
-  CFG.scriptUrl = document.getElementById('setupScriptUrl').value.trim();
-  CFG.skipped = false;
-  localStorage.setItem('babaCfg', JSON.stringify(CFG));
-  document.getElementById('setupScreen').style.display = 'none';
-  toast('Tudo configurado! ✨');
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (id === 'screenJosi') renderJosiDash();
 }
 
-function skipSetup(e) {
-  if(e) e.preventDefault();
-  CFG.skipped = true;
-  CFG.babyName = 'Bebê';
-  localStorage.setItem('babaCfg', JSON.stringify(CFG));
-  document.getElementById('setupScreen').style.display = 'none';
+function goTo(where) {
+  location.hash = where;
 }
 
+window.addEventListener('hashchange', router);
+
+// ===== DATE =====
 function setDate() {
   const now = new Date();
-  const opts = { weekday: 'long', day: '2-digit', month: 'long' };
-  document.getElementById('dateBadge').textContent = now.toLocaleDateString('pt-BR', opts);
+  const opts = { weekday:'long', day:'2-digit', month:'long' };
+  const str = now.toLocaleDateString('pt-BR', opts);
+  document.getElementById('dateBadge').textContent = str;
+  document.getElementById('josiDateBadge').textContent = str;
 }
 
+// ===== BABA TABS =====
+function babaTab(tab, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('babaForm').style.display = tab === 'form' ? 'block' : 'none';
+  document.getElementById('babaHist').style.display = tab === 'hist' ? 'block' : 'none';
+  if (tab === 'hist') renderBabaHist();
+}
+
+// ===== MOOD =====
 function setMood(el, val) {
   document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
   el.classList.add('selected');
   mood = val;
 }
 
+// ===== FEED =====
 function addFeed() {
   const row = document.createElement('div');
   row.className = 'feed-row';
@@ -335,17 +396,18 @@ function getFeed() {
   const out = [];
   document.querySelectorAll('#feedRows .feed-row').forEach(r => {
     const inputs = r.querySelectorAll('input');
-    const time = inputs[0].value, what = inputs[1].value.trim(), qty = inputs[2].value.trim();
-    if (time || what) out.push((time ? time + ' - ' : '') + what + (qty ? ' (' + qty + ')' : ''));
+    const t = inputs[0].value, w = inputs[1].value.trim(), q = inputs[2].value.trim();
+    if (t || w) out.push((t ? t + ' - ' : '') + w + (q ? ' (' + q + ')' : ''));
   });
   return out;
 }
 
+// ===== SLEEP =====
 function addSleep() {
-  const entry = document.createElement('div');
-  entry.className = 'sleep-entry';
-  entry.innerHTML = '<input type="time" class="s-start" oninput="calcDur(this)"><input type="time" class="s-end" oninput="calcDur(this)"><span class="sleep-dur">--</span><button class="del-btn" onclick="this.parentNode.remove()">✕</button>';
-  document.getElementById('sleepRows').appendChild(entry);
+  const e = document.createElement('div');
+  e.className = 'sleep-entry';
+  e.innerHTML = '<input type="time" class="s-start" oninput="calcDur(this)"><input type="time" class="s-end" oninput="calcDur(this)"><span class="sleep-dur">--</span><button class="del-btn" onclick="this.parentNode.remove()">✕</button>';
+  document.getElementById('sleepRows').appendChild(e);
 }
 
 function calcDur(inp) {
@@ -354,12 +416,12 @@ function calcDur(inp) {
   const e = entry.querySelector('.s-end').value;
   const dur = entry.querySelector('.sleep-dur');
   if (!s || !e) { dur.textContent = '--'; return; }
-  const [sh, sm] = s.split(':').map(Number);
-  const [eh, em] = e.split(':').map(Number);
-  let diff = (eh * 60 + em) - (sh * 60 + sm);
-  if (diff < 0) diff += 24 * 60;
-  const h = Math.floor(diff / 60), m = diff % 60;
-  dur.textContent = h > 0 ? h + 'h' + (m > 0 ? m + 'min' : '') : m + 'min';
+  const [sh,sm] = s.split(':').map(Number);
+  const [eh,em] = e.split(':').map(Number);
+  let diff = (eh*60+em)-(sh*60+sm);
+  if (diff < 0) diff += 24*60;
+  const h = Math.floor(diff/60), m = diff%60;
+  dur.textContent = h > 0 ? h+'h'+(m>0?m+'min':'') : m+'min';
 }
 
 function getSleep() {
@@ -368,26 +430,41 @@ function getSleep() {
     const s = r.querySelector('.s-start').value;
     const e = r.querySelector('.s-end').value;
     const d = r.querySelector('.sleep-dur').textContent;
-    if (s && e && d !== '--') out.push(s + ' às ' + e + ' (' + d + ')');
+    if (s && e && d !== '--') out.push(s+' às '+e+' ('+d+')');
   });
   return out;
 }
 
-function bump(type, n) {
-  if (type === 'pee') { pee = Math.max(0, pee + n); document.getElementById('peeCount').textContent = pee; }
-  else { poo = Math.max(0, poo + n); document.getElementById('pooCount').textContent = poo; }
+function getTotalSleepMin() {
+  let total = 0;
+  document.querySelectorAll('#sleepRows .sleep-entry').forEach(r => {
+    const s = r.querySelector('.s-start').value;
+    const e = r.querySelector('.s-end').value;
+    if (!s || !e) return;
+    const [sh,sm] = s.split(':').map(Number);
+    const [eh,em] = e.split(':').map(Number);
+    let diff = (eh*60+em)-(sh*60+sm);
+    if (diff < 0) diff += 24*60;
+    total += diff;
+  });
+  return total;
 }
 
-function togSym(el) { el.classList.toggle('on'); }
+// ===== DIAPERS =====
+function bump(type, n) {
+  if (type==='pee') { pee=Math.max(0,pee+n); document.getElementById('peeCount').textContent=pee; }
+  else { poo=Math.max(0,poo+n); document.getElementById('pooCount').textContent=poo; }
+}
 
+// ===== HEALTH =====
 function getSymptoms() {
-  return [...document.querySelectorAll('.stag.on')].map(s => s.textContent).join(', ');
+  return [...document.querySelectorAll('.stag.on')].map(s=>s.textContent).join(', ');
 }
 
 function addMed() {
   const row = document.createElement('div');
   row.className = 'meds-row';
-  row.innerHTML = '<input type="text" placeholder="Nome"><input type="text" placeholder="Dose"><input type="time">';
+  row.innerHTML = '<input type="text" placeholder="Remédio"><input type="text" placeholder="Dose"><input type="time">';
   document.getElementById('medsRows').appendChild(row);
 }
 
@@ -395,30 +472,32 @@ function getMeds() {
   const out = [];
   document.querySelectorAll('#medsRows .meds-row').forEach(r => {
     const inputs = r.querySelectorAll('input');
-    const name = inputs[0].value.trim(), dose = inputs[1].value.trim(), time = inputs[2].value;
-    if (name) out.push(name + (dose ? ' ' + dose : '') + (time ? ' às ' + time : ''));
+    const n=inputs[0].value.trim(), d=inputs[1].value.trim(), t=inputs[2].value;
+    if (n) out.push(n+(d?' '+d:'')+(t?' às '+t:''));
   });
   return out;
 }
 
+// ===== CHECKLIST =====
 function togCheck(el) {
   el.classList.toggle('checked');
-  el.querySelector('input').checked = el.classList.contains('checked');
 }
 
 function getActivities() {
-  return [...document.querySelectorAll('.check-item.checked input')].map(i => i.value).join(', ');
+  return [...document.querySelectorAll('#checklist .check-item.checked')].map(el=>el.dataset.val).join(', ');
 }
 
+// ===== COLLECT =====
 function collectData() {
   return {
     date: new Date().toLocaleDateString('pt-BR'),
-    time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-    mood: mood,
+    time: new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
+    mood,
     feeding: getFeed().join(' | '),
     sleep: getSleep().join(' | '),
-    pee: pee,
-    poo: poo,
+    sleepMin: getTotalSleepMin(),
+    pee,
+    poo,
     temp: document.getElementById('temp').value,
     fever: document.getElementById('fever').value,
     symptoms: getSymptoms(),
@@ -428,100 +507,170 @@ function collectData() {
   };
 }
 
+// ===== FORMAT WHATSAPP =====
 function formatMsg(d) {
-  const baby = CFG.babyName || 'Bebê';
-  let msg = '🍼 *Diário da ' + baby + ' — ' + d.date + '*\n\n';
-  if (d.mood) msg += '😊 *Humor:* ' + d.mood + '\n';
-  if (d.feeding) {
-    msg += '\n🍼 *Alimentação:*\n';
-    d.feeding.split('|').forEach(f => { if (f.trim()) msg += f.trim() + '\n'; });
-  }
-  if (d.sleep) {
-    msg += '\n😴 *Sono:*\n';
-    d.sleep.split('|').forEach(s => { if (s.trim()) msg += s.trim() + '\n'; });
-  }
-  msg += '\n🧷 *Fraldas:* ' + d.pee + ' xixi, ' + d.poo + ' cocô\n';
-  if (d.temp || d.fever) {
-    msg += '\n🌡️ *Saúde:*';
-    if (d.temp) msg += ' ' + d.temp + '°C';
-    if (d.fever && d.fever !== 'Não mediu') msg += ', febre: ' + d.fever;
-    msg += '\n';
-  }
-  if (d.symptoms) msg += '⚠️ *Sintomas:* ' + d.symptoms + '\n';
-  if (d.meds) msg += '💊 *Remédios:* ' + d.meds + '\n';
-  if (d.activities) msg += '\n✅ *Atividades:* ' + d.activities + '\n';
-  if (d.notes) msg += '\n📝 *Obs:* ' + d.notes + '\n';
+  let msg = '🍼 *Diário da Bebê — '+d.date+'*\n\n';
+  if (d.mood) msg += '😊 *Humor:* '+d.mood+'\n';
+  if (d.feeding) { msg+='\n🍼 *Alimentação:*\n'; d.feeding.split('|').forEach(f=>{if(f.trim())msg+=f.trim()+'\n';}); }
+  if (d.sleep) { msg+='\n😴 *Sono:*\n'; d.sleep.split('|').forEach(s=>{if(s.trim())msg+=s.trim()+'\n';}); }
+  msg+='\n🧷 *Fraldas:* '+d.pee+' xixi, '+d.poo+' cocô\n';
+  if (d.temp||d.fever) { msg+='\n🌡️ *Saúde:*'; if(d.temp)msg+=' '+d.temp+'°C'; if(d.fever&&d.fever!=='Não mediu')msg+=', febre: '+d.fever; msg+='\n'; }
+  if (d.symptoms) msg+='⚠️ *Sintomas:* '+d.symptoms+'\n';
+  if (d.meds) msg+='💊 *Remédios:* '+d.meds+'\n';
+  if (d.activities) msg+='\n✅ *Atividades:* '+d.activities+'\n';
+  if (d.notes) msg+='\n📝 *Obs:* '+d.notes+'\n';
   return msg;
 }
 
+// ===== WHATSAPP =====
 function sendWhatsApp() {
   const d = collectData();
-  const msg = formatMsg(d);
-  const phone = CFG.whatsapp || '';
-  window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
+  window.open('https://wa.me/?text='+encodeURIComponent(formatMsg(d)),'_blank');
 }
 
+// ===== SAVE =====
 async function saveRecord() {
   const d = collectData();
+
+  // local
   const history = getHistory();
   history.unshift(d);
-  localStorage.setItem('babaHistory', JSON.stringify(history.slice(0, 90)));
-  toast('Salvo! ✓');
+  localStorage.setItem('babaHistory', JSON.stringify(history.slice(0,90)));
+  toast('Salvando…');
 
-  if (CFG.scriptUrl) {
-    try {
-      const row = [d.date, d.time, d.mood, d.feeding, d.sleep, d.pee, d.poo, d.temp, d.fever, d.symptoms, d.meds, d.activities, d.notes];
-      await fetch(CFG.scriptUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ row: row }) });
-      toast('Salvo na planilha! ✨');
-    } catch(e) {
-      toast('Salvo só localmente (planilha offline)');
-    }
+  // sheets
+  try {
+    const row = [d.date,d.time,d.mood,d.feeding,d.sleep,d.pee,d.poo,d.temp,d.fever,d.symptoms,d.meds,d.activities,d.notes];
+    await fetch(SCRIPT_URL, { method:'POST', mode:'no-cors', body:JSON.stringify({row}) });
+    toast('Salvo na planilha! ✨');
+  } catch(e) {
+    toast('Salvo localmente ✓');
+  }
+
+  resetForm();
+}
+
+function resetForm() {
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));
+  mood='';
+  document.getElementById('feedRows').innerHTML='<div class="feed-row"><input type="time"><input type="text" placeholder="Mamadeira, papa…"><input type="text" placeholder="180ml"></div><div class="feed-row"><input type="time"><input type="text" placeholder="Mamadeira, papa…"><input type="text" placeholder="180ml"></div>';
+  document.getElementById('sleepRows').innerHTML='<div class="sleep-entry"><input type="time" class="s-start" oninput="calcDur(this)"><input type="time" class="s-end" oninput="calcDur(this)"><span class="sleep-dur">--</span></div>';
+  pee=0; poo=0;
+  document.getElementById('peeCount').textContent='0';
+  document.getElementById('pooCount').textContent='0';
+  document.getElementById('temp').value='';
+  document.getElementById('fever').value='';
+  document.querySelectorAll('.stag').forEach(s=>s.classList.remove('on'));
+  document.getElementById('medsRows').innerHTML='<div class="meds-row"><input type="text" placeholder="Remédio"><input type="text" placeholder="Dose"><input type="time"></div>';
+  document.querySelectorAll('#checklist .check-item').forEach(el=>el.classList.remove('checked'));
+  document.getElementById('notes').value='';
+}
+
+// ===== LOCAL HISTORY =====
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem('babaHistory')||'[]'); } catch(e) { return []; }
+}
+
+function renderBabaHist() {
+  const list=document.getElementById('histList');
+  const empty=document.getElementById('histEmpty');
+  const history=getHistory();
+  if(!history.length){list.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  list.innerHTML=history.map(d=>`
+    <div class="hist-item">
+      <div class="hist-date">📅 ${d.date} às ${d.time}</div>
+      ${d.mood?`<div class="hist-row"><span>Humor</span><strong>${d.mood}</strong></div>`:''}
+      ${d.feeding?`<div class="hist-row"><span>Refeições</span><strong>${d.feeding.split('|').filter(s=>s.trim()).length}x</strong></div>`:''}
+      <div class="hist-row"><span>Fraldas</span><strong>${d.pee} xixi · ${d.poo} cocô</strong></div>
+      ${d.symptoms?`<div class="hist-row"><span>Sintomas</span><strong>${d.symptoms}</strong></div>`:''}
+    </div>`).join('');
+}
+
+// ===== JOSI LOGIN =====
+function josiLogin() {
+  const pwd = document.getElementById('josiPwd').value;
+  if (pwd === JOSI_PWD) {
+    sessionStorage.setItem('josiUnlocked','1');
+    showScreen('screenJosi');
+  } else {
+    toast('Senha incorreta ❌');
+    document.getElementById('josiPwd').value='';
   }
 }
 
-function getHistory() {
-  try { return JSON.parse(localStorage.getItem('babaHistory') || '[]'); } catch(e) { return []; }
+function josiLogout() {
+  sessionStorage.removeItem('josiUnlocked');
+  location.hash='baba';
 }
 
-function renderHistory() {
-  const list = document.getElementById('historyList');
-  const empty = document.getElementById('histEmpty');
+// ===== JOSI DASHBOARD =====
+function renderJosiDash() {
   const history = getHistory();
-  if (!history.length) { list.innerHTML = ''; empty.style.display = 'block'; return; }
-  empty.style.display = 'none';
-  list.innerHTML = history.map(function(d) {
-    return '<div class="hist-item">' +
-      '<div class="hist-date">📅 ' + d.date + ' às ' + d.time + '</div>' +
-      (d.mood ? '<div class="hist-row"><span>Humor</span><strong>' + d.mood + '</strong></div>' : '') +
-      (d.feeding ? '<div class="hist-row"><span>Refeições</span><strong>' + (d.feeding.split('|').filter(function(s){return s.trim();}).length) + 'x</strong></div>' : '') +
-      (d.sleep ? '<div class="hist-row"><span>Sono</span><strong>' + (d.sleep.split('|').filter(function(s){return s.trim();}).length) + ' período(s)</strong></div>' : '') +
-      '<div class="hist-row"><span>Fraldas</span><strong>' + d.pee + ' xixi · ' + d.poo + ' cocô</strong></div>' +
-      (d.symptoms ? '<div class="hist-row"><span>Sintomas</span><strong>' + d.symptoms + '</strong></div>' : '') +
-      (d.notes ? '<div class="hist-row"><span>Obs</span><strong>' + d.notes.substring(0,60) + (d.notes.length>60?'…':'') + '</strong></div>' : '') +
-      '</div>';
-  }).join('');
+  if (!history.length) {
+    document.getElementById('statsGrid').innerHTML='<p style="color:var(--soft);font-size:0.9rem;grid-column:1/-1;text-align:center;padding:1rem;">Nenhum registro ainda 🍼</p>';
+    return;
+  }
+
+  // stats
+  const days = history.length;
+  const totalPee = history.reduce((a,d)=>a+(+d.pee||0),0);
+  const totalPoo = history.reduce((a,d)=>a+(+d.poo||0),0);
+  const totalSleep = history.reduce((a,d)=>a+(+d.sleepMin||0),0);
+  const avgSleepMin = Math.round(totalSleep/days);
+  const avgSleepH = Math.floor(avgSleepMin/60);
+  const avgSleepM = avgSleepMin%60;
+
+  document.getElementById('statDays').textContent=days;
+  document.getElementById('statPee').textContent=Math.round(totalPee/days*10)/10;
+  document.getElementById('statPoo').textContent=Math.round(totalPoo/days*10)/10;
+  document.getElementById('statSleep').textContent=avgSleepH>0?avgSleepH+'h'+(avgSleepM>0?avgSleepM+'m':''):avgSleepM+'min';
+
+  // mood chart
+  const moodCount={'😭 Muito chateada':0,'😐 Neutro':0,'🙂 Bem':0,'😄 Ótima!':0};
+  history.forEach(d=>{ if(d.mood&&moodCount[d.mood]!==undefined) moodCount[d.mood]++; });
+  const maxMood = Math.max(...Object.values(moodCount),1);
+  const moodLabels={'😭 Muito chateada':'😭 Chateada','😐 Neutro':'😐 Neutro','🙂 Bem':'🙂 Bem','😄 Ótima!':'😄 Ótima!'};
+  const moodColors={'😭 Muito chateada':'#FDA4AF','😐 Neutro':'#D1D5DB','🙂 Bem':'#86EFAC','😄 Ótima!':'#F472B6'};
+  document.getElementById('moodChart').innerHTML=Object.entries(moodCount).map(([k,v])=>`
+    <div class="mood-bar">
+      <span class="mood-bar-label">${moodLabels[k]}</span>
+      <div style="flex:1;background:#F3F4F6;border-radius:99px;height:12px;overflow:hidden;">
+        <div class="mood-bar-fill" style="width:${Math.round(v/maxMood*100)}%;background:${moodColors[k]};height:12px;"></div>
+      </div>
+      <span class="mood-bar-count">${v}x</span>
+    </div>`).join('');
+
+  // full history
+  document.getElementById('josiHistList').innerHTML=history.map(d=>`
+    <div class="hist-item">
+      <div class="hist-date">📅 ${d.date} às ${d.time}</div>
+      ${d.mood?`<div class="hist-row"><span>Humor</span><strong>${d.mood}</strong></div>`:''}
+      ${d.feeding?`<div class="hist-row"><span>Alimentação</span><strong>${d.feeding}</strong></div>`:''}
+      ${d.sleep?`<div class="hist-row"><span>Sono</span><strong>${d.sleep}</strong></div>`:''}
+      <div class="hist-row"><span>Fraldas</span><strong>${d.pee} xixi · ${d.poo} cocô</strong></div>
+      ${d.temp?`<div class="hist-row"><span>Temperatura</span><strong>${d.temp}°C</strong></div>`:''}
+      ${d.fever&&d.fever!=='Não mediu'?`<div class="hist-row"><span>Febre</span><strong>${d.fever}</strong></div>`:''}
+      ${d.symptoms?`<div class="hist-row"><span>Sintomas</span><strong>${d.symptoms}</strong></div>`:''}
+      ${d.meds?`<div class="hist-row"><span>Remédios</span><strong>${d.meds}</strong></div>`:''}
+      ${d.activities?`<div class="hist-row"><span>Atividades</span><strong>${d.activities}</strong></div>`:''}
+      ${d.notes?`<div class="hist-row"><span>Obs</span><strong>${d.notes}</strong></div>`:''}
+    </div>`).join('');
 }
 
-function showTab(tab) {
-  document.querySelectorAll('.tab').forEach(function(t, i) {
-    t.classList.toggle('active', (tab === 'form' && i === 0) || (tab === 'history' && i === 1));
-  });
-  document.getElementById('formPanel').style.display = tab === 'form' ? 'block' : 'none';
-  document.getElementById('historyPanel').style.display = tab === 'history' ? 'block' : 'none';
-  if (tab === 'history') renderHistory();
-}
-
+// ===== TOAST =====
 let toastTimer;
 function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
+  const el=document.getElementById('toast');
+  el.textContent=msg;
   el.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(function() { el.classList.remove('show'); }, 2800);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
 }
 
+// ===== INIT =====
 setDate();
-loadCfg();
+router();
 </script>
 </body>
 </html>
