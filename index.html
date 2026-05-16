@@ -153,6 +153,18 @@ textarea{min-height:85px;resize:vertical;}
 .lock-link{font-size:0.78rem;color:var(--soft);margin-top:0.25rem;}
 .lock-link a{color:var(--rose-dark);font-weight:700;text-decoration:none;}
 
+/* MODAL WHATSAPP */
+.wpp-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:500;display:flex;align-items:flex-end;justify-content:center;}
+.wpp-modal{background:white;width:100%;max-width:480px;border-radius:24px 24px 0 0;padding:1.5rem 1.25rem 2rem;max-height:85vh;display:flex;flex-direction:column;gap:1rem;}
+.wpp-modal h3{font-size:1.1rem;font-weight:800;color:var(--text);text-align:center;}
+.wpp-modal textarea{flex:1;min-height:260px;font-family:'Courier New',monospace;font-size:0.82rem;line-height:1.6;border:1.5px solid #E5E7EB;border-radius:12px;padding:0.75rem;background:#FAFAFA;resize:none;color:var(--text);}
+.wpp-btns{display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;}
+.wpp-btns button{padding:0.9rem;border:none;border-radius:14px;font-family:inherit;font-size:0.92rem;font-weight:800;cursor:pointer;}
+.btn-copy{background:#E0F2FE;color:#0369A1;}
+.btn-copy.copiado{background:#DCFCE7;color:#166534;}
+.btn-wpp-open{background:#25D366;color:white;}
+.btn-fechar{grid-column:1/-1;background:#F3F4F6;color:var(--soft);}
+
 /* DASHBOARD */
 .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;margin:0.9rem 0.75rem 0;}
 .stat-card{background:white;border:1.5px solid var(--border);border-radius:16px;padding:1rem;text-align:center;}
@@ -388,6 +400,19 @@ textarea{min-height:85px;resize:vertical;}
   </div>
 
 
+</div>
+
+<!-- MODAL WHATSAPP -->
+<div class="wpp-overlay" id="wppOverlay" style="display:none;" onclick="if(event.target===this)fecharWpp()">
+  <div class="wpp-modal">
+    <h3>📱 Relatório para enviar</h3>
+    <textarea id="wppText" readonly onclick="this.select()"></textarea>
+    <div class="wpp-btns">
+      <button class="btn-copy" id="btnCopy" onclick="copiarWpp()">📋 Copiar tudo</button>
+      <button class="btn-wpp-open" onclick="abrirWpp()">Abrir WhatsApp</button>
+      <button class="btn-fechar" onclick="fecharWpp()">Fechar</button>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -678,29 +703,138 @@ function collectData() {
 
 // ===== WHATSAPP =====
 function formatMsg(d) {
-  let msg='🍼 *Diário da Bebê — '+d.date+'*\n\n';
-  if(d.mood)msg+='😊 *Humor:* '+d.mood+'\n';
-  if(d.feeding){msg+='\n🍼 *Alimentação:*\n';d.feeding.split('|').forEach(f=>{if(f.trim())msg+=f.trim()+'\n';});}
-  if(d.sleep){msg+='\n😴 *Sono:*\n';d.sleep.split('|').forEach(s=>{if(s.trim())msg+=s.trim()+'\n';});}
-  msg+='\n🧷 *Fraldas:* '+d.pee+' xixi, '+d.poo+' cocô\n';
-  if(d.temp||d.fever){msg+='\n🌡️ *Saúde:*';if(d.temp)msg+=' '+d.temp+'°C';if(d.fever&&d.fever!=='Não mediu')msg+=', febre: '+d.fever;msg+='\n';}
-  if(d.symptoms)msg+='⚠️ *Sintomas:* '+d.symptoms+'\n';
-  if(d.meds)msg+='💊 *Remédios:* '+d.meds+'\n';
-  if(d.activities)msg+='\n✅ *Atividades:* '+d.activities+'\n';
-  if(d.notes)msg+='\n📝 *Obs:* '+d.notes+'\n';
-  return msg;
+  const L = []; // linhas
+  const sep = '─────────────────';
+
+  L.push('*── Diario da Bebe ──*');
+  L.push('*Data:* ' + d.date + '   *Hora:* ' + d.time);
+  L.push(sep);
+
+  // HUMOR
+  if (d.mood) {
+    L.push('');
+    L.push('*HUMOR*');
+    L.push(d.mood);
+  }
+
+  // ALIMENTACAO
+  const feeds = d.feeding ? d.feeding.split('|').map(f=>f.trim()).filter(Boolean) : [];
+  if (feeds.length) {
+    L.push('');
+    L.push('*ALIMENTACAO (' + feeds.length + ' refeicoes)*');
+    feeds.forEach((f,i) => L.push((i+1)+'. ' + f));
+  } else {
+    L.push('');
+    L.push('*ALIMENTACAO*');
+    L.push('Nenhuma registrada');
+  }
+
+  // SONO
+  const sleeps = d.sleep ? d.sleep.split('|').map(s=>s.trim()).filter(Boolean) : [];
+  if (sleeps.length) {
+    L.push('');
+    L.push('*SONO (' + sleeps.length + ' periodo' + (sleeps.length>1?'s':'') + ')*');
+    sleeps.forEach((s,i) => L.push((i+1)+'. ' + s));
+    if (d.sleep_min && d.sleep_min > 0) {
+      const h = Math.floor(d.sleep_min/60), m = d.sleep_min%60;
+      L.push('Total: ' + (h>0 ? h+'h'+(m>0?m+'min':'') : m+'min'));
+    }
+  } else {
+    L.push('');
+    L.push('*SONO*');
+    L.push('Nenhum registrado');
+  }
+
+  // FRALDAS
+  L.push('');
+  L.push('*FRALDAS*');
+  L.push('Xixi: ' + d.pee + 'x   Coco: ' + d.poo + 'x');
+
+  // SAUDE
+  const temSaude = d.temp || (d.fever && d.fever !== 'Não mediu') || d.symptoms || d.meds;
+  if (temSaude) {
+    L.push('');
+    L.push('*SAUDE*');
+    if (d.temp) L.push('Temperatura: ' + d.temp + 'C');
+    if (d.fever && d.fever !== 'Não mediu') L.push('Febre: ' + d.fever);
+    if (d.symptoms) L.push('Sintomas: ' + d.symptoms);
+    if (d.meds) {
+      L.push('Remedios:');
+      d.meds.split('|').map(m=>m.trim()).filter(Boolean).forEach(m => L.push('  - ' + m));
+    }
+  }
+
+  // ATIVIDADES
+  if (d.activities) {
+    L.push('');
+    L.push('*ATIVIDADES*');
+    d.activities.split(',').map(a=>a.trim()).filter(Boolean).forEach(a => L.push('+ ' + a));
+  }
+
+  // OBSERVACOES
+  if (d.notes) {
+    L.push('');
+    L.push('*OBSERVACOES*');
+    L.push(d.notes);
+  }
+
+  L.push('');
+  L.push(sep);
+
+  return L.join('\n');
 }
 
 function sendWhatsApp() {
-  const d=collectData();
-  const url='https://wa.me/?text='+encodeURIComponent(formatMsg(d));
-  const a=document.createElement('a');
-  a.href=url;
-  a.target='_blank';
-  a.rel='noopener noreferrer';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  const d = collectData();
+  const texto = formatMsg(d);
+  document.getElementById('wppText').value = texto;
+  document.getElementById('wppOverlay').style.display = 'flex';
+  document.getElementById('btnCopy').textContent = '📋 Copiar tudo';
+  document.getElementById('btnCopy').className = 'btn-copy';
+  // selecionar texto automaticamente
+  setTimeout(()=>{
+    const ta = document.getElementById('wppText');
+    ta.focus();
+    ta.select();
+  }, 100);
+}
+
+function copiarWpp() {
+  const texto = document.getElementById('wppText').value;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(texto).then(()=>{
+      const btn = document.getElementById('btnCopy');
+      btn.textContent = '✅ Copiado!';
+      btn.className = 'btn-copy copiado';
+      toast('Copiado! Cole no WhatsApp 📱');
+    }).catch(()=>{ copiarFallback(texto); });
+  } else {
+    copiarFallback(texto);
+  }
+}
+
+function copiarFallback(texto) {
+  const ta = document.getElementById('wppText');
+  ta.select();
+  try {
+    document.execCommand('copy');
+    const btn = document.getElementById('btnCopy');
+    btn.textContent = '✅ Copiado!';
+    btn.className = 'btn-copy copiado';
+    toast('Copiado! Cole no WhatsApp 📱');
+  } catch(e) {
+    toast('Selecione o texto e copie manualmente');
+  }
+}
+
+function abrirWpp() {
+  const texto = document.getElementById('wppText').value;
+  const url = 'https://wa.me/?text=' + encodeURIComponent(texto);
+  window.open(url, '_blank');
+}
+
+function fecharWpp() {
+  document.getElementById('wppOverlay').style.display = 'none';
 }
 
 // ===== SAVE =====
