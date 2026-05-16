@@ -339,8 +339,10 @@ textarea{min-height:85px;resize:vertical;}
     <div class="big">🌸</div>
     <h2>Painel dos Pais</h2>
     <p>Digite a senha para ver o painel completo com todos os registros da família.</p>
+    <p id="senhaDica" style="font-size:0.75rem;color:var(--rose-dark);background:var(--rose-light);padding:0.5rem 1rem;border-radius:10px;display:none;"></p>
     <input type="password" id="josiPwd" placeholder="senha" style="max-width:280px;text-align:center;" onkeydown="if(event.key==='Enter')josiLogin()">
     <button class="lock-btn" onclick="josiLogin()">Entrar</button>
+    <button onclick="mostrarSenha()" style="background:none;border:none;color:var(--soft);font-size:0.78rem;cursor:pointer;font-family:inherit;text-decoration:underline;">Esqueci a senha</button>
     <p class="lock-link">Voltar para a <a href="#" onclick="showBaba(); return false;">tela da babá</a></p>
   </div>
 </div>
@@ -441,8 +443,16 @@ let temaAtual = 'menina';
 function router() {
   const hash = location.hash;
   FAMILIA_ID = localStorage.getItem('familiaId') || '';
-  if (!FAMILIA_ID) { showScreen('screenSetup'); return; }
-  if (hash === '#pais') {
+  if (!FAMILIA_ID) {
+    // Guarda o hash destino para usar após o setup
+    if (hash) sessionStorage.setItem('pendingHash', hash);
+    showScreen('screenSetup');
+    return;
+  }
+  // Recupera hash pendente se existir
+  const pending = sessionStorage.getItem('pendingHash') || hash;
+  sessionStorage.removeItem('pendingHash');
+  if (pending === '#pais') {
     if (sessionStorage.getItem('josiUnlocked')) { showScreen('screenJosi'); renderJosiDash(); }
     else showScreen('screenJosiLock');
   } else {
@@ -466,9 +476,24 @@ function entrarFamilia() {
   const code = document.getElementById('setupCode').value.trim().toUpperCase();
   if (code.length < 4) { toast('Código precisa ter pelo menos 4 caracteres'); return; }
   FAMILIA_ID = code;
+
+  // Senha padrão: código + 123 (ex: SILVA2024 → SILVA2024123)
+  // Guarda no localStorage vinculada ao código
+  const senhaKey = 'senha_'+code;
+  if (!localStorage.getItem(senhaKey)) {
+    const senhaGerada = code + '123';
+    localStorage.setItem(senhaKey, senhaGerada);
+  }
+  const senha = localStorage.getItem(senhaKey);
+
   localStorage.setItem('familiaId', code);
-  toast('Bem-vinda, família '+code+'! 🍼');
-  setTimeout(()=>{ location.hash='baba'; router(); }, 800);
+
+  // Mostra senha ao usuário antes de entrar
+  const msgSenha = '\n\n🔑 Senha do painel dos pais: ' + senha + '\n\nGuarde essa senha! Você vai precisar dela para acessar o painel completo.';
+  alert('✅ Família ' + code + ' configurada!' + msgSenha);
+
+  // Preserva o hash original (pode ter vindo via #pais)
+  router();
 }
 
 // ===== DATE =====
@@ -724,8 +749,11 @@ async function renderBabaHist() {
 
 // ===== JOSI LOGIN =====
 function josiLogin() {
-  const pwd=document.getElementById('josiPwd').value;
-  if(pwd===JOSI_PWD){
+  const pwd = document.getElementById('josiPwd').value;
+  // Senha: salva no localStorage ou fallback = codigo + '123'
+  const senhaKey = 'senha_' + FAMILIA_ID;
+  const senhaCorreta = localStorage.getItem(senhaKey) || (FAMILIA_ID + '123');
+  if (pwd === senhaCorreta) {
     sessionStorage.setItem('josiUnlocked','1');
     showScreen('screenJosi');
     renderJosiDash();
@@ -733,6 +761,14 @@ function josiLogin() {
     toast('Senha incorreta ❌');
     document.getElementById('josiPwd').value='';
   }
+}
+
+function mostrarSenha() {
+  const senhaKey = 'senha_' + FAMILIA_ID;
+  const senha = localStorage.getItem(senhaKey) || (FAMILIA_ID + '123');
+  const dica = document.getElementById('senhaDica');
+  dica.textContent = '🔑 Sua senha: ' + senha;
+  dica.style.display = 'block';
 }
 
 function josiLogout() {
