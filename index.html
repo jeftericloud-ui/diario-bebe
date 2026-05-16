@@ -188,10 +188,10 @@ textarea{min-height:85px;resize:vertical;}
   <div class="lock-screen">
     <div class="big">🍼</div>
     <h2>Diário da Bebê</h2>
-    <p>Primeira vez? Crie um código pra sua família.<br>Já tem código? Digite ele abaixo.</p>
-    <input type="text" id="setupCode" placeholder="Código da família (ex: SILVA2024)" maxlength="20" style="max-width:280px;text-transform:uppercase;letter-spacing:2px;text-align:center;" oninput="this.value=this.value.toUpperCase()">
-    <button class="lock-btn" onclick="entrarFamilia()" style="max-width:280px;width:100%;padding:0.9rem;background:var(--rose);color:white;border:none;border-radius:14px;font-family:inherit;font-size:1rem;font-weight:800;cursor:pointer;">Entrar ✨</button>
-    <p style="font-size:0.78rem;color:var(--soft);margin-top:0.5rem;line-height:1.6;">O código é compartilhado entre babá e pais.<br>Use algo que só vocês saibam.</p>
+    <p id="setupMsg">Digite o código da sua família para entrar.</p>
+    <input type="text" id="setupCode" placeholder="Código da família (ex: SILVA2024)" maxlength="20" style="max-width:280px;text-transform:uppercase;letter-spacing:2px;text-align:center;" oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')entrarFamilia()">
+    <button class="lock-btn" id="btnEntrar" onclick="entrarFamilia()" style="max-width:280px;width:100%;padding:0.9rem;background:var(--rose);color:white;border:none;border-radius:14px;font-family:inherit;font-size:1rem;font-weight:800;cursor:pointer;">Entrar ✨</button>
+    <p style="font-size:0.75rem;color:var(--soft);margin-top:0.25rem;line-height:1.6;">Não tem acesso? Fale com os pais para cadastrar sua família.</p>
   </div>
 </div>
 
@@ -350,11 +350,9 @@ textarea{min-height:85px;resize:vertical;}
   <div class="lock-screen">
     <div class="big">🌸</div>
     <h2>Painel dos Pais</h2>
-    <p>Digite a senha para ver o painel completo com todos os registros da família.</p>
-    <p id="senhaDica" style="font-size:0.75rem;color:var(--rose-dark);background:var(--rose-light);padding:0.5rem 1rem;border-radius:10px;display:none;"></p>
+    <p>Digite a senha do painel para ver todos os registros da família.</p>
     <input type="password" id="josiPwd" placeholder="senha" style="max-width:280px;text-align:center;" onkeydown="if(event.key==='Enter')josiLogin()">
-    <button class="lock-btn" onclick="josiLogin()">Entrar</button>
-    <button onclick="mostrarSenha()" style="background:none;border:none;color:var(--soft);font-size:0.78rem;cursor:pointer;font-family:inherit;text-decoration:underline;">Esqueci a senha</button>
+    <button class="lock-btn" id="btnJosiLogin" onclick="josiLogin()">Entrar</button>
     <p class="lock-link">Voltar para a <a href="#" onclick="showBaba(); return false;">tela da babá</a></p>
   </div>
 </div>
@@ -457,9 +455,27 @@ async function sbSelect(familiaId) {
   } catch(e) { console.error('sbSelect exception:', e); return []; }
 }
 
+// ===== APPS SCRIPT (Google Sheets auth) =====
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwsfNrpzEh5eQqtLR02QFpZI8r6IUeySRmMQ_9SNhI3kJ87XzkfpJwUn0xB1TI8UP0j/exec';
+
+// Apps Script Web App suporta CORS por padrão quando publicado como "Qualquer pessoa"
+async function sheetsCall(payload) {
+  try {
+    const r = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    if (!r.ok) { console.error('sheetsCall HTTP', r.status); return null; }
+    return await r.json();
+  } catch(e) {
+    console.error('sheetsCall:', e);
+    return null;
+  }
+}
+
 // ===== STATE =====
 let FAMILIA_ID = '';
-let JOSI_PWD = 'josi123';
 let mood = '';
 let pee = 0, poo = 0;
 let temaAtual = 'menina';
@@ -497,27 +513,43 @@ function showBaba() {
 window.addEventListener('hashchange', router);
 
 // ===== SETUP FAMILIA =====
-function entrarFamilia() {
+async function entrarFamilia() {
   const code = document.getElementById('setupCode').value.trim().toUpperCase();
-  if (code.length < 4) { toast('Código precisa ter pelo menos 4 caracteres'); return; }
-  FAMILIA_ID = code;
+  if (code.length < 3) { toast('Digite o código da família'); return; }
 
-  // Senha padrão: código + 123 (ex: SILVA2024 → SILVA2024123)
-  // Guarda no localStorage vinculada ao código
-  const senhaKey = 'senha_'+code;
-  if (!localStorage.getItem(senhaKey)) {
-    const senhaGerada = code + '123';
-    localStorage.setItem(senhaKey, senhaGerada);
+  const btn = document.getElementById('btnEntrar');
+  btn.textContent = 'Verificando…';
+  btn.disabled = true;
+
+  // Verifica se família existe no Sheets (checa sem senha)
+  const res = await sheetsCall({ action: 'validarSenha', familia_id: code, senha: '___CHECK___' });
+
+  btn.textContent = 'Entrar ✨';
+  btn.disabled = false;
+
+  if (!res) {
+    toast('Erro de conexão. Tente novamente.');
+    return;
   }
-  const senha = localStorage.getItem(senhaKey);
+  // motivo 'familia' = não existe, motivo 'inativo' = bloqueado, motivo 'senha' = existe (senha errada é ok aqui)
+  if (res.motivo === 'familia') {
+    document.getElementById('setupMsg').textContent = 'Código não encontrado. Verifique com os pais.';
+    document.getElementById('setupMsg').style.color = '#B91C1C';
+    toast('Família não encontrada ❌');
+    return;
+  }
+  if (res.motivo === 'inativo') {
+    toast('Acesso desativado. Fale com os pais.');
+    return;
+  }
+  // motivo 'senha' ou valido=true = família existe e está ativa
 
+  // Família válida — salva e entra
+  FAMILIA_ID = code;
   localStorage.setItem('familiaId', code);
-
-  // Mostra senha ao usuário antes de entrar
-  const msgSenha = '\n\n🔑 Senha do painel dos pais: ' + senha + '\n\nGuarde essa senha! Você vai precisar dela para acessar o painel completo.';
-  alert('✅ Família ' + code + ' configurada!' + msgSenha);
-
-  // Preserva o hash original (pode ter vindo via #pais)
+  localStorage.setItem('nomeFamilia', res.nome || code);
+  document.getElementById('setupMsg').textContent = 'Digite o código da sua família para entrar.';
+  document.getElementById('setupMsg').style.color = '';
   router();
 }
 
@@ -882,27 +914,40 @@ async function renderBabaHist() {
 }
 
 // ===== JOSI LOGIN =====
-function josiLogin() {
+async function josiLogin() {
   const pwd = document.getElementById('josiPwd').value;
-  // Senha: salva no localStorage ou fallback = codigo + '123'
-  const senhaKey = 'senha_' + FAMILIA_ID;
-  const senhaCorreta = localStorage.getItem(senhaKey) || (FAMILIA_ID + '123');
-  if (pwd === senhaCorreta) {
+  if (!pwd) { toast('Digite a senha'); return; }
+
+  const btn = document.getElementById('btnJosiLogin');
+  btn.textContent = 'Verificando…';
+  btn.disabled = true;
+
+  const res = await sheetsCall({
+    action: 'validarSenha',
+    familia_id: FAMILIA_ID,
+    senha: pwd
+  });
+
+  btn.textContent = 'Entrar';
+  btn.disabled = false;
+
+  if (!res) {
+    toast('Erro de conexão. Tente novamente.');
+    return;
+  }
+  if (res.valido) {
     sessionStorage.setItem('josiUnlocked','1');
     showScreen('screenJosi');
     renderJosiDash();
   } else {
-    toast('Senha incorreta ❌');
+    const msgs = {
+      senha: 'Senha incorreta ❌',
+      familia: 'Família não encontrada',
+      inativo: 'Acesso desativado'
+    };
+    toast(msgs[res.motivo] || 'Acesso negado ❌');
     document.getElementById('josiPwd').value='';
   }
-}
-
-function mostrarSenha() {
-  const senhaKey = 'senha_' + FAMILIA_ID;
-  const senha = localStorage.getItem(senhaKey) || (FAMILIA_ID + '123');
-  const dica = document.getElementById('senhaDica');
-  dica.textContent = '🔑 Sua senha: ' + senha;
-  dica.style.display = 'block';
 }
 
 function josiLogout() {
