@@ -73,13 +73,19 @@ body{font-family:var(--font);background:var(--bg);color:var(--text1);min-height:
 .feed-label{font-size:.72rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.55rem;}
 .feed-empty{font-size:.85rem;color:var(--text3);padding:.5rem 0;}
 .evento-item{display:flex;align-items:center;gap:.75rem;background:var(--card);border-radius:var(--r);padding:.75rem .9rem;margin-bottom:.45rem;box-shadow:var(--shadow);animation:slideUp .2s ease;}
-.ev-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
-.ev-info{flex:1;}
-.ev-tipo{font-size:.85rem;font-weight:600;color:var(--text1);}
-.ev-detalhe{font-size:.75rem;color:var(--text3);margin-top:.08rem;}
-.ev-hora{font-size:.72rem;color:var(--text3);flex-shrink:0;}
-.ev-del{background:none;border:none;color:var(--text3);font-size:1rem;cursor:pointer;padding:.2rem .35rem;border-radius:6px;}
+.ev-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.ev-info{flex:1;min-width:0;}
+.ev-header-row{display:flex;align-items:center;justify-content:space-between;gap:.5rem;}
+.ev-tipo{font-size:.88rem;font-weight:700;color:var(--text1);}
+.ev-detalhe{font-size:.78rem;color:var(--text3);margin-top:.12rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ev-hora{font-size:.72rem;color:var(--text3);flex-shrink:0;font-weight:500;}
+.ev-expanded{margin-top:.5rem;padding-top:.5rem;border-top:.5px solid var(--sep);}
+.ev-det-row{display:flex;justify-content:space-between;align-items:center;padding:.18rem 0;gap:.5rem;}
+.ev-det-key{font-size:.75rem;color:var(--text3);flex-shrink:0;}
+.ev-det-val{font-size:.82rem;color:var(--text1);font-weight:500;text-align:right;}
+.ev-del{background:none;border:none;color:var(--text3);font-size:.95rem;cursor:pointer;padding:.25rem .4rem;border-radius:8px;flex-shrink:0;}
 .ev-del:active{background:#FFE8E8;color:var(--red);}
+.evento-item{cursor:pointer;transition:background .15s;}
 
 /* ── ACTION GRID ── */
 .section-row{display:flex;align-items:center;justify-content:space-between;padding:0 1rem;margin:1.1rem 0 .55rem;}
@@ -855,13 +861,15 @@ function salvarSono() {
 
 function selectFralda(tipo) {
   fraldaSel=tipo;
+  // Reset todos
   ['Xixi','Coco','Misto'].forEach(t=>{
     const btn=document.getElementById('btn'+t);
-    if(btn) btn.style.background='var(--bg)';btn.style.borderColor='transparent';
+    if(btn){ btn.style.background='var(--bg)'; btn.style.borderColor='transparent'; btn.style.color='var(--text2)'; }
   });
+  // Seleciona o escolhido
   const map={xixi:'Xixi',coco:'Coco',misto:'Misto'};
   const sel=document.getElementById('btn'+map[tipo]);
-  if(sel){sel.style.background='#E3F0FF';sel.style.borderColor='var(--blue)';}
+  if(sel){ sel.style.background='#E3F0FF'; sel.style.borderColor='var(--blue)'; sel.style.color='var(--blue)'; }
 }
 
 function salvarFralda() {
@@ -947,18 +955,72 @@ const tipoConfig={
   obs:{icon:'📝',bg:'#E0F7FA',label:'Obs'},
 };
 
+function parseDado(e) {
+  // Garante que dado é sempre objeto, mesmo se vier como string do banco
+  if (!e.dado) return {};
+  if (typeof e.dado === 'string') { try { return JSON.parse(e.dado); } catch(_){ return {}; } }
+  return e.dado;
+}
+
 function descEvento(e) {
-  const d=e.dado;
+  const d = parseDado(e);
   switch(e.tipo){
     case 'humor': return d.valor||'';
     case 'mamadeira': return [d.hora?'às '+d.hora:'',d.qty,d.obs].filter(Boolean).join(' · ');
     case 'papa': return [d.oque,d.hora?'às '+d.hora:'',d.qty].filter(Boolean).join(' · ');
     case 'sono': return d.inicio&&d.fim?d.inicio+' → '+d.fim+(d.dur?' ('+d.dur+')':''):'';
-    case 'fralda': const fl={xixi:'💛 Xixi',coco:'💩 Cocô',misto:'🔄 Misto'};return fl[d.tipo]||d.tipo;
-    case 'saude': {let s='';if(d.temp)s+='🌡️ '+d.temp+'°C ';if(d.syms)s+=d.syms+' ';if(d.medNome)s+='💊 '+d.medNome;return s.trim();}
-    case 'atividade': return Array.isArray(d.atividades)?d.atividades.join(', '):'';
+    case 'fralda': {const fl={xixi:'💛 Xixi',coco:'💩 Cocô',misto:'🔄 Misto'};return fl[d.tipo]||d.tipo||'';}
+    case 'saude': {
+      let s='';
+      if(d.temp) s+='🌡️ '+d.temp+'°C ';
+      if(d.fever&&d.fever!=='Não mediu') s+=d.fever+' ';
+      if(d.syms) s+=d.syms+' ';
+      if(d.medNome) s+='💊 '+d.medNome+(d.medDose?' '+d.medDose:'')+(d.medHora?' às '+d.medHora:'');
+      return s.trim();
+    }
+    case 'atividade': {
+      const a = d.atividades;
+      return Array.isArray(a)?a.join(', '):(typeof a==='string'?a:'');
+    }
     case 'obs': return d.texto||'';
     default: return '';
+  }
+}
+
+function detalheEvento(e) {
+  // retorna objeto com campos individuais para exibição expandida
+  const d = parseDado(e);
+  switch(e.tipo){
+    case 'humor': return [{label:'Estado', val:d.valor||'—'}];
+    case 'mamadeira': return [
+      d.hora&&{label:'Horário',val:d.hora},
+      d.qty&&{label:'Quantidade',val:d.qty},
+      d.obs&&{label:'Obs',val:d.obs},
+    ].filter(Boolean);
+    case 'papa': return [
+      d.oque&&{label:'O que',val:d.oque},
+      d.hora&&{label:'Horário',val:d.hora},
+      d.qty&&{label:'Quantidade',val:d.qty},
+    ].filter(Boolean);
+    case 'sono': return [
+      d.inicio&&{label:'Dormiu',val:d.inicio},
+      d.fim&&{label:'Acordou',val:d.fim},
+      d.dur&&{label:'Duração',val:d.dur},
+    ].filter(Boolean);
+    case 'fralda': {const fl={xixi:'💛 Xixi',coco:'💩 Cocô',misto:'🔄 Xixi + Cocô'};return [{label:'Tipo',val:fl[d.tipo]||d.tipo}];}
+    case 'saude': return [
+      d.temp&&{label:'Temperatura',val:d.temp+'°C'},
+      d.fever&&d.fever!=='Não mediu'&&{label:'Febre',val:d.fever},
+      d.syms&&{label:'Sintomas',val:d.syms},
+      d.medNome&&{label:'Remédio',val:d.medNome+(d.medDose?' · '+d.medDose:'')+(d.medHora?' às '+d.medHora:'')},
+    ].filter(Boolean);
+    case 'atividade': {
+      const a=d.atividades;
+      const lista=Array.isArray(a)?a:(typeof a==='string'?[a]:[]);
+      return lista.map(v=>({label:'Atividade',val:v}));
+    }
+    case 'obs': return [{label:'Nota',val:d.texto||''}];
+    default: return [];
   }
 }
 
@@ -977,18 +1039,36 @@ function renderFeedDia() {
     const cfg=tipoConfig[e.tipo]||{icon:'•',bg:'#F2F2F7',label:e.tipo};
     const icon=e._icon||cfg.icon;
     const bg=e._iconBg||cfg.bg;
-    const desc=e._descricao||descEvento(e);
     const hora=e._hora||horaEvento(e);
-    return `<div class="evento-item">
+    const detalhes=detalheEvento(e);
+    const detHtml=detalhes.map(d=>`
+      <div class="ev-det-row">
+        <span class="ev-det-key">${d.label}</span>
+        <span class="ev-det-val">${d.val}</span>
+      </div>`).join('');
+    return `<div class="evento-item" onclick="toggleEvento(this)">
       <div class="ev-icon" style="background:${bg};">${icon}</div>
       <div class="ev-info">
-        <div class="ev-tipo">${cfg.label}</div>
-        <div class="ev-detalhe">${desc}</div>
+        <div class="ev-header-row">
+          <span class="ev-tipo">${cfg.label}</span>
+          <span class="ev-hora">${hora}</span>
+        </div>
+        ${detalhes.length===1?`<div class="ev-detalhe">${detalhes[0].val}</div>`:''}
+        <div class="ev-expanded" style="display:none;">
+          ${detHtml}
+        </div>
       </div>
-      <span class="ev-hora">${hora}</span>
-      <button class="ev-del" onclick="deletarEvento('${e.id}')">✕</button>
+      <button class="ev-del" onclick="event.stopPropagation();deletarEvento('${e.id}')">✕</button>
     </div>`;
   }).join('');
+}
+
+function toggleEvento(el) {
+  const exp = el.querySelector('.ev-expanded');
+  if(!exp) return;
+  const open = exp.style.display==='block';
+  exp.style.display = open ? 'none' : 'block';
+  el.style.background = open ? 'var(--card)' : '#F8F8FF';
 }
 
 async function deletarEvento(id) {
@@ -1134,6 +1214,8 @@ function renderJosiDash(todos) {
   Object.entries(porDia).forEach(([dia,evs])=>{
     html+=`<div class="live-day-group"><div class="live-day-label">${dia}</div>`;
     evs.forEach(e=>{
+      // garantir dado parseado
+      if(typeof e.dado==='string'){try{e.dado=JSON.parse(e.dado);}catch(_){e.dado={};}}
       const cfg=tipoConfig[e.tipo]||{icon:'•',bg:'#F2F2F7',label:e.tipo};
       const desc=descEvento(e);
       const hora=horaEvento(e);
