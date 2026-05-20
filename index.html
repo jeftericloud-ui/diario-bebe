@@ -4,454 +4,559 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Diário da Bebê</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --rose: #F472B6;
-  --rose-light: #FDE7F3;
-  --rose-dark: #BE185D;
-  --mint: #6EE7B7;
-  --mint-dark: #059669;
-  --lav: #C4B5FD;
-  --lav-dark: #6D28D9;
-  --bg: #FFF5F9;
+  --bg: #F2F2F7;
   --card: #FFFFFF;
-  --text: #1E1B4B;
-  --soft: #6B7280;
-  --border: #FCE7F3;
-  --header-from: #FDE7F3;
-  --header-to: #EDE9FE;
-  --radius: 20px;
-  --rsm: 12px;
+  --text1: #000000;
+  --text2: #3C3C43;
+  --text3: #8E8E93;
+  --sep: rgba(60,60,67,0.12);
+  --blue: #007AFF;
+  --green: #34C759;
+  --red: #FF3B30;
+  --orange: #FF9500;
+  --purple: #AF52DE;
+  --teal: #5AC8FA;
+  --yellow: #FFCC00;
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+  --r: 16px;
+  --rx: 22px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.07), 0 0 1px rgba(0,0,0,0.04);
 }
-
-/* TEMAS */
-body.tema-menina { --rose:#F472B6;--rose-light:#FDE7F3;--rose-dark:#BE185D;--bg:#FFF5F9;--border:#FCE7F3;--header-from:#FDE7F3;--header-to:#EDE9FE; }
-body.tema-menino { --rose:#60A5FA;--rose-light:#EFF6FF;--rose-dark:#1D4ED8;--bg:#F0F9FF;--border:#DBEAFE;--header-from:#DBEAFE;--header-to:#EDE9FE; }
-body.tema-neutro { --rose:#6EE7B7;--rose-light:#ECFDF5;--rose-dark:#065F46;--bg:#F0FDF4;--border:#D1FAE5;--header-from:#D1FAE5;--header-to:#FEF9C3; }
-body.tema-amarelo { --rose:#FBBF24;--rose-light:#FFFBEB;--rose-dark:#92400E;--bg:#FFFBEB;--border:#FEF3C7;--header-from:#FEF3C7;--header-to:#FDE7F3; }
-body.tema-lilas { --rose:#A78BFA;--rose-light:#F5F3FF;--rose-dark:#5B21B6;--bg:#F5F3FF;--border:#EDE9FE;--header-from:#EDE9FE;--header-to:#FCE7F3; }
-
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:3rem;transition:background .3s;}
+body{font-family:var(--font);background:var(--bg);color:var(--text1);min-height:100vh;-webkit-font-smoothing:antialiased;}
 
+/* SCREENS */
 .screen{display:none;}
 .screen.active{display:block;}
 
-/* HEADER */
-.header{background:linear-gradient(135deg,var(--header-from),var(--header-to));padding:1.2rem 1.25rem 0.9rem;text-align:center;border-bottom:2px solid var(--border);position:sticky;top:0;z-index:10;transition:background .3s;}
-.header h1{font-size:1.4rem;font-weight:800;color:var(--rose-dark);}
-.date-badge{display:inline-block;margin-top:0.3rem;background:white;border:1.5px solid var(--border);border-radius:99px;padding:0.2rem 1rem;font-size:0.82rem;font-weight:600;color:var(--soft);}
+/* ── ENTRADA ── */
+.entry-wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.5rem;gap:1.25rem;background:var(--bg);}
+.entry-logo{font-size:3.5rem;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.12));}
+.entry-title{font-size:1.75rem;font-weight:700;letter-spacing:-0.5px;text-align:center;}
+.entry-sub{font-size:0.92rem;color:var(--text3);text-align:center;line-height:1.5;}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;width:100%;max-width:320px;}
+.choice-card{background:var(--card);border-radius:var(--rx);padding:1.4rem 1rem;display:flex;flex-direction:column;align-items:center;gap:0.55rem;cursor:pointer;box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s;user-select:none;}
+.choice-card:active{transform:scale(.96);box-shadow:none;}
+.choice-icon{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.7rem;}
+.c-baba .choice-icon{background:#E8F5E9;}
+.c-pais .choice-icon{background:#FCE4EC;}
+.choice-label{font-size:0.92rem;font-weight:600;}
+.choice-sub{font-size:0.72rem;color:var(--text3);}
+.login-panel{display:none;flex-direction:column;align-items:center;gap:0.75rem;width:100%;max-width:300px;animation:slideUp .22s ease;}
+.login-panel.show{display:flex;}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.lp-input{width:100%;padding:.88rem 1rem;background:var(--card);border:none;border-radius:var(--r);font-family:var(--font);font-size:1rem;color:var(--text1);box-shadow:var(--shadow);text-align:center;outline:none;transition:box-shadow .2s;}
+.lp-input:focus{box-shadow:0 0 0 3px rgba(0,122,255,.22),var(--shadow);}
+.lp-input::placeholder{color:var(--text3);}
+.btn-primary{width:100%;padding:.9rem;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font-family:var(--font);font-size:.95rem;font-weight:600;cursor:pointer;transition:opacity .15s,transform .15s;touch-action:manipulation;}
+.btn-primary:active{opacity:.82;transform:scale(.98);}
+.btn-primary:disabled{opacity:.5;}
+.btn-ghost{background:none;border:none;font-family:var(--font);font-size:.88rem;color:var(--blue);cursor:pointer;padding:.35rem;}
+.err-msg{font-size:.8rem;color:var(--red);text-align:center;min-height:1.1em;}
 
-/* TABS */
-.tab-bar{display:grid;grid-template-columns:1fr 1fr;margin:0.75rem 0.75rem 0;background:white;border:1.5px solid var(--border);border-radius:14px;overflow:hidden;}
-.tab{padding:0.7rem;text-align:center;font-weight:800;font-size:0.88rem;cursor:pointer;color:var(--soft);border:none;background:none;font-family:inherit;transition:all .18s;}
-.tab.active{background:var(--rose-light);color:var(--rose-dark);}
+/* ── BABA HEADER ── */
+.baba-header{background:var(--card);padding:.9rem 1.1rem .7rem;position:sticky;top:0;z-index:20;border-bottom:.5px solid var(--sep);}
+.bh-row{display:flex;align-items:center;justify-content:space-between;}
+.bh-profile{display:flex;align-items:center;gap:.65rem;}
+.baby-avatar{width:42px;height:42px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:1.3rem;overflow:hidden;flex-shrink:0;}
+.baby-avatar img{width:100%;height:100%;object-fit:cover;}
+.baby-name{font-size:.95rem;font-weight:600;}
+.baby-age{font-size:.73rem;color:var(--text3);}
+.bh-right{text-align:right;}
+.bh-date{font-size:.73rem;color:var(--text3);font-weight:500;}
+.icon-btn{background:none;border:none;font-size:1rem;cursor:pointer;padding:.25rem;color:var(--text3);}
 
-/* SECTION */
-.section{background:var(--card);margin:0.9rem 0.75rem 0;border-radius:var(--radius);border:1.5px solid var(--border);overflow:hidden;}
-.sec-head{display:flex;align-items:center;gap:0.6rem;padding:0.9rem 1.2rem 0.7rem;border-bottom:1.5px solid var(--border);background:#FDFAFF;}
-.sec-icon{font-size:1.3rem;}
-.sec-title{font-size:0.95rem;font-weight:800;}
-.sec-body{padding:0.9rem 1.2rem;}
-.sublabel{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--soft);margin:0.8rem 0 0.4rem;}
+/* ── FEED DO DIA ── */
+.feed-wrap{padding:.75rem 1rem 0;}
+.feed-label{font-size:.72rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.55rem;}
+.feed-empty{font-size:.85rem;color:var(--text3);padding:.5rem 0;}
+.evento-item{display:flex;align-items:center;gap:.75rem;background:var(--card);border-radius:var(--r);padding:.75rem .9rem;margin-bottom:.45rem;box-shadow:var(--shadow);animation:slideUp .2s ease;}
+.ev-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.ev-info{flex:1;}
+.ev-tipo{font-size:.85rem;font-weight:600;color:var(--text1);}
+.ev-detalhe{font-size:.75rem;color:var(--text3);margin-top:.08rem;}
+.ev-hora{font-size:.72rem;color:var(--text3);flex-shrink:0;}
+.ev-del{background:none;border:none;color:var(--text3);font-size:1rem;cursor:pointer;padding:.2rem .35rem;border-radius:6px;}
+.ev-del:active{background:#FFE8E8;color:var(--red);}
+
+/* ── ACTION GRID ── */
+.section-row{display:flex;align-items:center;justify-content:space-between;padding:0 1rem;margin:1.1rem 0 .55rem;}
+.section-label{font-size:1rem;font-weight:700;letter-spacing:-.2px;}
+.action-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.55rem;padding:0 1rem;}
+.ac{background:var(--card);border-radius:var(--rx);padding:.9rem .5rem .8rem;display:flex;flex-direction:column;align-items:center;gap:.4rem;cursor:pointer;box-shadow:var(--shadow);transition:transform .14s,box-shadow .14s;user-select:none;-webkit-user-select:none;}
+.ac:active{transform:scale(.93);box-shadow:none;}
+.ac-wrap{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;}
+.ac-name{font-size:.68rem;font-weight:600;color:var(--text2);text-align:center;line-height:1.2;}
+.ac-blue .ac-wrap{background:#E3F0FF;}
+.ac-orange .ac-wrap{background:#FFF3E0;}
+.ac-purple .ac-wrap{background:#F3E5FF;}
+.ac-yellow .ac-wrap{background:#FFFDE7;}
+.ac-red .ac-wrap{background:#FFE8E8;}
+.ac-green .ac-wrap{background:#E6F9EC;}
+.ac-teal .ac-wrap{background:#E0F7FA;}
+.ac-pink .ac-wrap{background:#FCE4EC;}
+
+/* ── BOTTOM BAR ── */
+.bottom-bar{padding:.9rem 1rem calc(.9rem + env(safe-area-inset-bottom));display:grid;grid-template-columns:1fr 1fr;gap:.6rem;background:var(--bg);}
+.btn-wpp{padding:.88rem;background:#25D366;color:#fff;border:none;border-radius:var(--r);font-family:var(--font);font-size:.9rem;font-weight:600;cursor:pointer;touch-action:manipulation;transition:opacity .15s;}
+.btn-wpp:active{opacity:.82;}
+
+/* ── BOTTOM SHEET ── */
+.sh-overlay{position:fixed;inset:0;background:rgba(0,0,0,.38);z-index:100;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);}
+.sh-overlay.open{display:flex;}
+.sheet{background:var(--card);width:100%;max-width:480px;border-radius:24px 24px 0 0;padding:0 0 calc(1.5rem + env(safe-area-inset-bottom));max-height:88vh;overflow-y:auto;animation:shUp .26s cubic-bezier(.32,.72,0,1);}
+@keyframes shUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.sh-handle{width:36px;height:4px;background:var(--sep);border-radius:2px;margin:.7rem auto;}
+.sh-header{display:flex;align-items:center;justify-content:space-between;padding:.2rem 1.2rem .9rem;}
+.sh-title{font-size:1.05rem;font-weight:700;}
+.sh-close{width:28px;height:28px;background:var(--bg);border:none;border-radius:50%;font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text3);}
+.sh-body{padding:0 1.2rem;}
+
+/* FIELD GROUP */
+.fg{background:var(--bg);border-radius:var(--r);overflow:hidden;margin-bottom:.7rem;}
+.fr{display:flex;align-items:center;padding:.72rem .95rem;border-bottom:.5px solid var(--sep);gap:.7rem;}
+.fr:last-child{border-bottom:none;}
+.fl{font-size:.88rem;color:var(--text1);font-weight:500;min-width:85px;flex-shrink:0;}
+.fr input,.fr select,.fr textarea{flex:1;background:none;border:none;outline:none;font-family:var(--font);font-size:.88rem;color:var(--text1);text-align:right;}
+.fr input::placeholder,.fr textarea::placeholder{color:var(--text3);}
+.fr textarea{text-align:left;resize:none;min-height:70px;}
 
 /* MOOD */
-.mood-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.45rem;}
-.mood-btn{display:flex;flex-direction:column;align-items:center;gap:0.3rem;padding:0.7rem 0.2rem;background:#F9FAFB;border:2px solid #E5E7EB;border-radius:var(--rsm);cursor:pointer;transition:all .18s;user-select:none;}
-.mood-btn .emo{font-size:1.9rem;}
-.mood-btn .lbl{font-size:0.68rem;font-weight:700;color:var(--soft);}
-.mood-btn.selected{background:var(--rose-light);border-color:var(--rose);transform:scale(1.05);}
-.mood-btn.selected .lbl{color:var(--rose-dark);}
+.mood-row{display:flex;gap:.45rem;margin-bottom:.7rem;}
+.mood-opt{flex:1;display:flex;flex-direction:column;align-items:center;gap:.28rem;padding:.75rem .2rem;background:var(--bg);border-radius:var(--r);cursor:pointer;border:2px solid transparent;transition:all .14s;user-select:none;}
+.mood-opt .em{font-size:1.65rem;}
+.mood-opt .ml{font-size:.6rem;font-weight:600;color:var(--text3);}
+.mood-opt.sel{background:#E3F0FF;border-color:var(--blue);}
+.mood-opt.sel .ml{color:var(--blue);}
 
-/* INPUTS */
-input[type=text],input[type=time],input[type=number],input[type=password],select,textarea{width:100%;padding:0.58rem 0.75rem;border:1.5px solid #E5E7EB;border-radius:10px;font-family:inherit;font-size:0.9rem;color:var(--text);background:#FAFAFA;transition:border-color .2s;}
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);background:white;}
-textarea{min-height:85px;resize:vertical;}
+/* COUNTER */
+.counter-row{display:flex;align-items:center;justify-content:space-between;padding:.72rem .95rem;background:var(--bg);border-radius:var(--r);margin-bottom:.5rem;}
+.counter-label{font-size:.92rem;font-weight:500;}
+.counter-ctrl{display:flex;align-items:center;gap:.9rem;}
+.cbtn{width:32px;height:32px;border-radius:50%;border:none;font-size:1.15rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation;transition:transform .1s;}
+.cbtn:active{transform:scale(.88);}
+.cbtn.minus{background:var(--sep);color:var(--text2);}
+.cbtn.plus{background:var(--blue);color:#fff;}
+.cval{font-size:1.25rem;font-weight:700;min-width:26px;text-align:center;}
 
-/* FEED */
-.feed-head,.feed-row{display:grid;grid-template-columns:80px 1fr 70px;gap:0.45rem;margin-bottom:0.5rem;align-items:center;}
-.feed-head span{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--soft);padding:0 .2rem;}
+/* TAGS */
+.tag-wrap{display:flex;flex-wrap:wrap;gap:.38rem;margin-bottom:.7rem;}
+.tag{padding:.32rem .8rem;background:var(--bg);border-radius:99px;font-size:.8rem;font-weight:500;color:var(--text2);cursor:pointer;border:1.5px solid transparent;transition:all .13s;user-select:none;}
+.tag.on{background:#E3F0FF;border-color:var(--blue);color:var(--blue);}
+.act-tag{padding:.38rem .88rem;background:var(--bg);border-radius:99px;font-size:.82rem;font-weight:500;color:var(--text2);cursor:pointer;border:1.5px solid transparent;transition:all .13s;user-select:none;}
+.act-tag.on{background:#E6F9EC;border-color:var(--green);color:#1B5E20;}
 
-/* ADD BTN */
-.add-btn{width:100%;margin-top:0.4rem;padding:0.6rem;border:2px dashed #D1D5DB;border-radius:10px;background:transparent;color:var(--soft);font-family:inherit;font-size:0.88rem;font-weight:700;cursor:pointer;transition:all .18s;}
-.add-btn:hover{border-color:var(--rose);color:var(--rose-dark);background:var(--rose-light);}
+/* ADD ROW BTN */
+.add-row-btn{width:100%;padding:.62rem;background:none;border:1.5px dashed var(--sep);border-radius:var(--r);font-family:var(--font);font-size:.85rem;color:var(--blue);cursor:pointer;margin-top:.35rem;}
 
-/* SLEEP */
-.sleep-labels,.sleep-entry{display:grid;grid-template-columns:1fr 1fr auto;gap:0.45rem;align-items:center;}
-.sleep-labels{margin-bottom:0.35rem;padding:0 0.6rem;}
-.sleep-labels span{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--soft);}
-.sleep-entry{margin-bottom:0.5rem;background:#F9FAFB;border-radius:12px;padding:0.6rem;}
-.sleep-dur{font-size:0.78rem;font-weight:700;color:var(--lav-dark);background:#EDE9FE;padding:0.28rem 0.45rem;border-radius:8px;text-align:center;white-space:nowrap;}
-.del-btn{width:30px;height:30px;border:none;background:#FEE2E2;color:#B91C1C;border-radius:8px;font-size:0.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+/* SH SAVE */
+.sh-save{width:100%;padding:.88rem;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font-family:var(--font);font-size:.95rem;font-weight:600;cursor:pointer;margin-top:.9rem;transition:opacity .15s;}
+.sh-save:active{opacity:.82;}
 
-/* DIAPERS */
-.diaper-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;}
-.diaper-card{background:#F9FAFB;border:1.5px solid #E5E7EB;border-radius:14px;padding:0.9rem;text-align:center;}
-.diaper-label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--soft);margin-bottom:0.45rem;}
-.diaper-count{font-size:2.4rem;font-weight:800;line-height:1;margin-bottom:0.65rem;}
-.diaper-count.pee{color:#0EA5E9;}
-.diaper-count.poo{color:#92400E;}
-.diaper-inc{width:100%;padding:0.6rem;border:none;border-radius:10px;font-family:inherit;font-size:0.95rem;font-weight:800;cursor:pointer;transition:all .18s;touch-action:manipulation;}
-.diaper-inc.pee{background:#E0F2FE;color:#0369A1;}
-.diaper-inc.pee:active{background:#0EA5E9;color:white;transform:scale(.97);}
-.diaper-inc.poo{background:#FEF3C7;color:#92400E;}
-.diaper-inc.poo:active{background:#F59E0B;color:white;transform:scale(.97);}
-.diaper-dec{background:none;border:none;color:var(--soft);font-size:0.78rem;cursor:pointer;margin-top:0.25rem;padding:0.18rem 0.45rem;border-radius:6px;font-family:inherit;}
+/* SLEEP DUR */
+.sl-dur{font-size:.72rem;font-weight:600;color:var(--blue);background:#E3F0FF;padding:.18rem .45rem;border-radius:6px;white-space:nowrap;}
+.sl-del{width:24px;height:24px;border:none;background:#FFE8E8;color:var(--red);border-radius:7px;font-size:.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 
-/* HEALTH */
-.health-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;margin-bottom:0.7rem;}
-.health-field label{display:block;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--soft);margin-bottom:0.3rem;}
-.symptom-tags{display:flex;flex-wrap:wrap;gap:0.38rem;}
-.stag{padding:0.32rem 0.7rem;background:#F3F4F6;border:2px solid #E5E7EB;border-radius:99px;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all .15s;user-select:none;}
-.stag.on{background:#FFF7ED;border-color:#F59E0B;color:#92400E;}
-.meds-row{display:grid;grid-template-columns:1fr 75px 68px;gap:0.45rem;margin-bottom:0.45rem;align-items:center;}
+/* ── JOSI PAINEL ── */
+.josi-header{background:var(--card);padding:1.1rem 1.2rem .9rem;border-bottom:.5px solid var(--sep);position:sticky;top:0;z-index:20;}
+.jh-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.2rem;}
+.jh-title{font-size:1.15rem;font-weight:700;}
+.jh-date{font-size:.78rem;color:var(--text3);}
+.btn-sair{background:none;border:1px solid var(--sep);border-radius:9px;padding:.3rem .8rem;font-family:var(--font);font-size:.78rem;color:var(--text3);cursor:pointer;}
 
-/* CHECKLIST */
-.checklist{display:grid;grid-template-columns:1fr 1fr;gap:0.45rem;}
-.check-item{display:flex;align-items:center;gap:0.45rem;padding:0.65rem 0.7rem;background:#F9FAFB;border:2px solid #E5E7EB;border-radius:12px;cursor:pointer;transition:all .18s;user-select:none;-webkit-user-select:none;}
-.check-item.checked{background:#ECFDF5;border-color:var(--mint);}
-.check-box{width:20px;height:20px;border:2px solid #D1D5DB;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
-.check-item.checked .check-box{background:var(--mint-dark);border-color:var(--mint-dark);}
-.check-item.checked .check-box::after{content:'✓';color:white;font-size:0.75rem;font-weight:800;}
-.check-text{font-size:0.82rem;font-weight:700;}
+.profile-card{background:var(--card);border-radius:var(--rx);padding:1rem 1.1rem;margin:.8rem 1rem .55rem;box-shadow:var(--shadow);display:flex;align-items:center;gap:.9rem;}
+.profile-avatar{width:56px;height:56px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:1.8rem;overflow:hidden;flex-shrink:0;}
+.profile-avatar img{width:100%;height:100%;object-fit:cover;}
+.profile-name{font-size:1rem;font-weight:700;}
+.profile-detail{font-size:.78rem;color:var(--text3);margin-top:.12rem;}
+.profile-edit{background:var(--bg);border:none;border-radius:8px;padding:.3rem .7rem;font-family:var(--font);font-size:.75rem;font-weight:600;color:var(--blue);cursor:pointer;}
 
-/* TEMA PICKER */
-.tema-picker{display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;padding:0.75rem 1.2rem 1rem;}
-.tema-opt{width:42px;height:42px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:all .2s;flex-shrink:0;}
-.tema-opt.active{border-color:var(--text);transform:scale(1.15);}
-.tema-opt.t-menina{background:linear-gradient(135deg,#F472B6,#BE185D);}
-.tema-opt.t-menino{background:linear-gradient(135deg,#60A5FA,#1D4ED8);}
-.tema-opt.t-neutro{background:linear-gradient(135deg,#6EE7B7,#065F46);}
-.tema-opt.t-amarelo{background:linear-gradient(135deg,#FBBF24,#92400E);}
-.tema-opt.t-lilas{background:linear-gradient(135deg,#A78BFA,#5B21B6);}
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem;padding:.2rem 1rem .6rem;}
+.stat-card{background:var(--card);border-radius:var(--rx);padding:.9rem;box-shadow:var(--shadow);text-align:center;}
+.stat-num{font-size:1.9rem;font-weight:700;color:var(--blue);letter-spacing:-1px;}
+.stat-lbl{font-size:.68rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-top:.15rem;}
 
-/* SUBMIT */
-.submit-area{padding:1.1rem 0.75rem;display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;}
-.btn-action{padding:0.95rem;border:none;border-radius:16px;font-family:inherit;font-size:0.92rem;font-weight:800;cursor:pointer;transition:all .2s;touch-action:manipulation;}
-.btn-action.wpp{background:#25D366;color:white;}
-.btn-action.wpp:active{transform:scale(.97);}
-.btn-action.save{background:var(--rose);color:white;}
-.btn-action.save:active{transform:scale(.97);background:var(--rose-dark);}
+.psec{padding:0 1rem .5rem;}
+.psec-title{font-size:.95rem;font-weight:700;margin-bottom:.55rem;padding:.2rem 0;border-bottom:.5px solid var(--sep);}
+
+/* LIVE FEED (josi) */
+.live-feed{padding:0 1rem;}
+.live-day-group{margin-bottom:1rem;}
+.live-day-label{font-size:.75rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.45rem;}
+.live-item{display:flex;align-items:center;gap:.7rem;background:var(--card);border-radius:var(--r);padding:.68rem .85rem;margin-bottom:.38rem;box-shadow:var(--shadow);}
+.li-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.li-info{flex:1;}
+.li-tipo{font-size:.82rem;font-weight:600;}
+.li-det{font-size:.72rem;color:var(--text3);}
+.li-hora{font-size:.7rem;color:var(--text3);flex-shrink:0;}
+
+/* MOOD CHART */
+.mood-bar{display:flex;align-items:center;gap:.55rem;margin-bottom:.38rem;}
+.mb-lbl{font-size:.75rem;color:var(--text3);width:78px;flex-shrink:0;}
+.mb-track{flex:1;height:9px;background:var(--bg);border-radius:99px;overflow:hidden;}
+.mb-fill{height:9px;border-radius:99px;transition:width .4s ease;}
+.mb-n{font-size:.72rem;font-weight:600;color:var(--text2);}
+
+/* WPP */
+.wpp-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px);}
+.wpp-overlay.open{display:flex;}
+.wpp-modal{background:var(--card);width:100%;max-width:480px;border-radius:24px 24px 0 0;padding:0 1.2rem calc(1.5rem + env(safe-area-inset-bottom));max-height:85vh;display:flex;flex-direction:column;gap:.7rem;animation:shUp .26s cubic-bezier(.32,.72,0,1);}
+.wpp-handle{width:36px;height:4px;background:var(--sep);border-radius:2px;margin:.7rem auto;}
+.wpp-title{font-size:.98rem;font-weight:700;text-align:center;}
+.wpp-ta{flex:1;min-height:230px;font-family:'Menlo','Monaco',monospace;font-size:.76rem;line-height:1.7;border:none;border-radius:var(--r);padding:.8rem;background:var(--bg);color:var(--text1);resize:none;outline:none;}
+.wpp-btns{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;}
+.wpp-btns button{padding:.82rem;border:none;border-radius:var(--r);font-family:var(--font);font-size:.88rem;font-weight:600;cursor:pointer;transition:opacity .15s;}
+.wpp-btns button:active{opacity:.8;}
+.btn-copy{background:var(--bg);color:var(--blue);}
+.btn-copy.done{background:#E6F9EC;color:#1B5E20;}
+.btn-owpp{background:#25D366;color:#fff;}
+.btn-close-wpp{grid-column:1/-1;background:var(--bg);color:var(--text3);}
 
 /* TOAST */
-.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);background:#1E1B4B;color:white;padding:0.7rem 1.4rem;border-radius:99px;font-size:0.88rem;font-weight:700;z-index:999;transition:transform .3s ease;white-space:nowrap;pointer-events:none;}
+.toast{position:fixed;bottom:calc(1.4rem + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(110px);background:rgba(0,0,0,.8);color:#fff;padding:.58rem 1.35rem;border-radius:99px;font-family:var(--font);font-size:.85rem;font-weight:500;z-index:999;transition:transform .28s cubic-bezier(.32,.72,0,1);white-space:nowrap;pointer-events:none;backdrop-filter:blur(8px);}
 .toast.show{transform:translateX(-50%) translateY(0);}
 
 /* LOADING */
-.loading{text-align:center;padding:2rem;color:var(--soft);font-size:0.9rem;font-weight:600;}
-.spinner{display:inline-block;width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--rose);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:0.5rem;}
+.loading{text-align:center;padding:2rem;color:var(--text3);font-size:.88rem;}
+.spinner{display:inline-block;width:20px;height:20px;border:2.5px solid var(--sep);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:.45rem;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* LOCK SCREEN */
-.lock-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;padding:2rem;text-align:center;gap:1rem;}
-.lock-screen .big{font-size:3rem;}
-.lock-screen h2{font-size:1.3rem;font-weight:800;color:var(--rose-dark);}
-.lock-screen p{color:var(--soft);font-size:0.9rem;line-height:1.6;}
-.lock-screen input{max-width:280px;padding:0.8rem 1rem;font-size:1rem;}
-.lock-screen .lock-btn{max-width:280px;width:100%;padding:0.9rem;background:var(--rose);color:white;border:none;border-radius:14px;font-family:inherit;font-size:1rem;font-weight:800;cursor:pointer;}
-.lock-link{font-size:0.78rem;color:var(--soft);margin-top:0.25rem;}
-.lock-link a{color:var(--rose-dark);font-weight:700;text-decoration:none;}
-
-/* MODAL WHATSAPP */
-.wpp-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:500;display:flex;align-items:flex-end;justify-content:center;}
-.wpp-modal{background:white;width:100%;max-width:480px;border-radius:24px 24px 0 0;padding:1.5rem 1.25rem 2rem;max-height:85vh;display:flex;flex-direction:column;gap:1rem;}
-.wpp-modal h3{font-size:1.1rem;font-weight:800;color:var(--text);text-align:center;}
-.wpp-modal textarea{flex:1;min-height:260px;font-family:'Courier New',monospace;font-size:0.82rem;line-height:1.6;border:1.5px solid #E5E7EB;border-radius:12px;padding:0.75rem;background:#FAFAFA;resize:none;color:var(--text);}
-.wpp-btns{display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;}
-.wpp-btns button{padding:0.9rem;border:none;border-radius:14px;font-family:inherit;font-size:0.92rem;font-weight:800;cursor:pointer;}
-.btn-copy{background:#E0F2FE;color:#0369A1;}
-.btn-copy.copiado{background:#DCFCE7;color:#166534;}
-.btn-wpp-open{background:#25D366;color:white;}
-.btn-fechar{grid-column:1/-1;background:#F3F4F6;color:var(--soft);}
-
-/* ESCOLHA */
-.escolha-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.9rem;width:100%;max-width:320px;}
-.escolha-card{display:flex;flex-direction:column;align-items:center;gap:0.6rem;padding:1.5rem 1rem;background:white;border:2.5px solid #E5E7EB;border-radius:20px;cursor:pointer;transition:all .2s;user-select:none;}
-.escolha-card:active{transform:scale(.97);}
-.escolha-card.baba:hover,.escolha-card.baba.sel{background:#FDF2FF;border-color:#A78BFA;}
-.escolha-card.pais:hover,.escolha-card.pais.sel{background:#FFF0F6;border-color:#F472B6;}
-.escolha-card .ec-icon{font-size:2.8rem;}
-.escolha-card .ec-label{font-size:0.95rem;font-weight:800;color:var(--text);}
-.escolha-card .ec-sub{font-size:0.72rem;color:var(--soft);font-weight:600;}
-.login-box{display:none;flex-direction:column;align-items:center;gap:0.75rem;width:100%;max-width:300px;margin-top:0.5rem;}
-.login-box.show{display:flex;}
-.login-box input{width:100%;padding:0.85rem 1rem;border:2px solid #E5E7EB;border-radius:14px;font-family:inherit;font-size:1rem;text-align:center;background:white;}
-.login-box input:focus{outline:none;border-color:var(--rose);}
-.login-box .lock-btn{width:100%;padding:0.9rem;background:var(--rose);color:white;border:none;border-radius:14px;font-family:inherit;font-size:1rem;font-weight:800;cursor:pointer;}
-.back-link{font-size:0.78rem;color:var(--soft);cursor:pointer;background:none;border:none;font-family:inherit;text-decoration:underline;margin-top:0.25rem;}
-
-/* DASHBOARD */
-.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.65rem;margin:0.9rem 0.75rem 0;}
-.stat-card{background:white;border:1.5px solid var(--border);border-radius:16px;padding:1rem;text-align:center;}
-.stat-num{font-size:2rem;font-weight:800;color:var(--rose-dark);}
-.stat-label{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--soft);margin-top:0.2rem;}
-.hist-item{background:white;border:1.5px solid var(--border);border-radius:14px;padding:1rem;margin:0 0.75rem 0.7rem;}
-.hist-date{font-size:0.78rem;font-weight:700;color:var(--rose-dark);margin-bottom:0.45rem;}
-.hist-row{display:flex;justify-content:space-between;font-size:0.83rem;padding:0.18rem 0;color:var(--soft);gap:0.5rem;}
-.hist-row strong{color:var(--text);font-weight:700;text-align:right;}
-.dash-title{font-size:1rem;font-weight:800;color:var(--text);margin:1rem 0.75rem 0.5rem;padding-bottom:0.4rem;border-bottom:2px solid var(--border);}
-.mood-bar{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.35rem;}
-.mood-bar-label{font-size:0.78rem;font-weight:600;color:var(--soft);width:85px;flex-shrink:0;}
-.mood-bar-count{font-size:0.78rem;font-weight:700;color:var(--text);margin-left:0.25rem;flex-shrink:0;}
-.logout-btn{display:block;margin:0.75rem auto 0;background:none;border:1.5px solid #E5E7EB;border-radius:10px;padding:0.5rem 1.5rem;color:var(--soft);font-family:inherit;font-size:0.85rem;font-weight:700;cursor:pointer;}
+.logout-row{padding:1rem;display:flex;justify-content:center;}
+.btn-logout{background:none;border:1px solid var(--sep);border-radius:10px;padding:.45rem 1.4rem;font-family:var(--font);font-size:.82rem;color:var(--red);cursor:pointer;}
 </style>
 </head>
-<body class="tema-menina">
+<body>
 
-<!-- ===== TELA DE ENTRADA ÚNICA ===== -->
+<!-- ══ ENTRADA ══ -->
 <div id="screenSetup" class="screen active">
-  <div class="lock-screen">
-    <div class="big">🍼</div>
-    <h2>Diário da Bebê</h2>
-    <p id="setupMsg" style="color:var(--soft);font-size:0.9rem;">Quem está acessando?</p>
-
-    <!-- ESCOLHA -->
-    <div class="escolha-grid" id="escolhaGrid">
-      <div class="escolha-card baba" onclick="escolher('baba')">
-        <span class="ec-icon">👶</span>
-        <span class="ec-label">Sou a Babá</span>
-        <span class="ec-sub">Registrar o dia</span>
+  <div class="entry-wrap">
+    <div class="entry-logo">🍼</div>
+    <div>
+      <div class="entry-title">Diário da Bebê</div>
+      <div class="entry-sub" style="margin-top:.35rem;" id="setupMsg">Quem está acessando?</div>
+    </div>
+    <div class="choice-grid" id="choiceGrid">
+      <div class="choice-card c-baba" onclick="escolher('baba')">
+        <div class="choice-icon">👶</div>
+        <div class="choice-label">Sou a Babá</div>
+        <div class="choice-sub">Registrar evento</div>
       </div>
-      <div class="escolha-card pais" onclick="escolher('pais')">
-        <span class="ec-icon">🌸</span>
-        <span class="ec-label">Somos os Pais</span>
-        <span class="ec-sub">Ver o painel</span>
+      <div class="choice-card c-pais" onclick="escolher('pais')">
+        <div class="choice-icon">🌸</div>
+        <div class="choice-label">Sou os Pais</div>
+        <div class="choice-sub">Ver o painel</div>
       </div>
     </div>
-
-    <!-- LOGIN BABÁ -->
-    <div class="login-box" id="loginBaba">
-      <p style="font-size:0.82rem;color:var(--soft);text-align:center;">Digite o código da família</p>
-      <input type="text" id="setupCode" placeholder="Ex: SILVA2024" maxlength="20"
+    <div class="login-panel" id="loginBaba">
+      <div class="entry-sub">Código da família</div>
+      <input class="lp-input" type="text" id="setupCode" placeholder="Ex: SILVA2024" maxlength="20"
         style="text-transform:uppercase;letter-spacing:2px;"
         oninput="this.value=this.value.toUpperCase()"
         onkeydown="if(event.key==='Enter')entrarFamilia()">
-      <button class="lock-btn" id="btnEntrar" onclick="entrarFamilia()">Entrar 🍼</button>
-      <button class="back-link" onclick="voltarEscolha()">← Voltar</button>
+      <button class="btn-primary" id="btnEntrar" onclick="entrarFamilia()">Entrar</button>
+      <div class="err-msg" id="errBaba"></div>
+      <button class="btn-ghost" onclick="voltarEscolha()">← Voltar</button>
     </div>
-
-    <!-- LOGIN PAIS -->
-    <div class="login-box" id="loginPais">
-      <p style="font-size:0.82rem;color:var(--soft);text-align:center;">Digite o código da família</p>
-      <input type="text" id="paisCodigo" placeholder="Ex: SILVA2024" maxlength="20"
+    <div class="login-panel" id="loginPais">
+      <div class="entry-sub">Código da família</div>
+      <input class="lp-input" type="text" id="paisCodigo" placeholder="Ex: SILVA2024" maxlength="20"
         style="text-transform:uppercase;letter-spacing:2px;"
         oninput="this.value=this.value.toUpperCase()"
         onkeydown="if(event.key==='Enter')focusSenha()">
-      <p style="font-size:0.82rem;color:var(--soft);text-align:center;margin-top:0.25rem;">E a senha do painel</p>
-      <input type="password" id="paisSenha" placeholder="Senha" style="text-align:center;"
+      <div class="entry-sub">Senha do painel</div>
+      <input class="lp-input" type="password" id="paisSenha" placeholder="••••••••"
         onkeydown="if(event.key==='Enter')entrarPais()">
-      <button class="lock-btn" id="btnEntrarPais" onclick="entrarPais()">Entrar 🌸</button>
-      <button class="back-link" onclick="voltarEscolha()">← Voltar</button>
+      <button class="btn-primary" id="btnEntrarPais" onclick="entrarPais()">Entrar</button>
+      <div class="err-msg" id="errPais"></div>
+      <button class="btn-ghost" onclick="voltarEscolha()">← Voltar</button>
     </div>
-
   </div>
 </div>
 
-<!-- ===== BABA SCREEN ===== -->
+<!-- ══ BABÁ ══ -->
 <div id="screenBaba" class="screen">
-  <div class="header">
-    <h1>🍼 Diário da Bebê</h1>
-    <div class="date-badge" id="dateBadge"></div>
-    <button onclick="logoff()" style="margin-top:0.4rem;background:none;border:1px solid rgba(190,24,93,0.3);border-radius:99px;padding:0.2rem 0.9rem;font-size:0.72rem;font-weight:700;color:var(--rose-dark);cursor:pointer;font-family:inherit;">Sair</button>
-  </div>
-
-  <div class="tab-bar">
-    <button class="tab active" onclick="babaTab('form',this)">📝 Registro</button>
-    <button class="tab" onclick="babaTab('hist',this)">📋 Histórico</button>
-  </div>
-
-  <div id="babaForm">
-    <!-- TEMA -->
-    <div class="section">
-      <div class="sec-head" onclick="togTema()" style="cursor:pointer;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:0.6rem;">
-          <span class="sec-icon">🎨</span><span class="sec-title">Tema do app</span>
-        </div>
-        <span id="temaTog" style="font-size:0.8rem;color:var(--soft);font-weight:700;">▼ mostrar</span>
-      </div>
-      <div class="tema-picker" id="temaPicker" style="display:none;">
-        <div class="tema-opt t-menina" onclick="setTema('menina',this)" title="Menina"></div>
-        <div class="tema-opt t-menino" onclick="setTema('menino',this)" title="Menino"></div>
-        <div class="tema-opt t-neutro" onclick="setTema('neutro',this)" title="Neutro"></div>
-        <div class="tema-opt t-amarelo" onclick="setTema('amarelo',this)" title="Amarelo"></div>
-        <div class="tema-opt t-lilas" onclick="setTema('lilas',this)" title="Lilás"></div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="sec-head"><span class="sec-icon">😊</span><span class="sec-title">Como a bebê está?</span></div>
-      <div class="sec-body">
-        <div class="mood-grid">
-          <div class="mood-btn" onclick="setMood(this,'😭 Muito chateada')"><span class="emo">😭</span><span class="lbl">Chateada</span></div>
-          <div class="mood-btn" onclick="setMood(this,'😐 Neutro')"><span class="emo">😐</span><span class="lbl">Neutro</span></div>
-          <div class="mood-btn" onclick="setMood(this,'🙂 Bem')"><span class="emo">🙂</span><span class="lbl">Bem</span></div>
-          <div class="mood-btn" onclick="setMood(this,'😄 Ótima!')"><span class="emo">😄</span><span class="lbl">Ótima!</span></div>
+  <div class="baba-header">
+    <div class="bh-row">
+      <div class="bh-profile">
+        <div class="baby-avatar" id="babyAvatarThumb">🍼</div>
+        <div>
+          <div class="baby-name" id="babyNameThumb">Bebê</div>
+          <div class="baby-age" id="babyAgeThumb"></div>
         </div>
       </div>
-    </div>
-
-    <div class="section">
-      <div class="sec-head"><span class="sec-icon">🍼</span><span class="sec-title">Alimentação</span></div>
-      <div class="sec-body">
-        <div class="feed-head"><span>Horário</span><span>O que</span><span>Qtd</span></div>
-        <div id="feedRows">
-          <div class="feed-row"><input type="time"><input type="text" placeholder="Mamadeira, papa…"><input type="text" placeholder="180ml"></div>
-          <div class="feed-row"><input type="time"><input type="text" placeholder="Mamadeira, papa…"><input type="text" placeholder="180ml"></div>
-        </div>
-        <button class="add-btn" onclick="addFeed()">+ Adicionar refeição</button>
+      <div class="bh-right">
+        <div class="bh-date" id="dateBadge"></div>
+        <button class="icon-btn" onclick="logoff()" style="margin-top:.2rem;">⎋ Sair</button>
       </div>
-    </div>
-
-    <div class="section">
-      <div class="sec-head"><span class="sec-icon">😴</span><span class="sec-title">Sono</span></div>
-      <div class="sec-body">
-        <div class="sleep-labels"><span>Dormiu</span><span>Acordou</span><span style="opacity:0">x</span></div>
-        <div id="sleepRows">
-          <div class="sleep-entry">
-            <input type="time" class="s-start" oninput="calcDur(this)">
-            <input type="time" class="s-end" oninput="calcDur(this)">
-            <span class="sleep-dur">--</span>
-          </div>
-        </div>
-        <button class="add-btn" onclick="addSleep()">+ Outro período</button>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="sec-head"><span class="sec-icon">🧷</span><span class="sec-title">Fraldas trocadas</span></div>
-      <div class="sec-body">
-        <div class="diaper-grid">
-          <div class="diaper-card">
-            <div class="diaper-label">💛 Xixi</div>
-            <div class="diaper-count pee" id="peeCount">0</div>
-            <button class="diaper-inc pee" onclick="bump('pee',1)">+ Xixi</button>
-            <br><button class="diaper-dec" onclick="bump('pee',-1)">desfazer</button>
-          </div>
-          <div class="diaper-card">
-            <div class="diaper-label">💩 Cocô</div>
-            <div class="diaper-count poo" id="pooCount">0</div>
-            <button class="diaper-inc poo" onclick="bump('poo',1)">+ Cocô</button>
-            <br><button class="diaper-dec" onclick="bump('poo',-1)">desfazer</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="sec-head"><span class="sec-icon">🌡️</span><span class="sec-title">Saúde</span></div>
-      <div class="sec-body">
-        <div class="health-grid">
-          <div class="health-field"><label>Temperatura (°C)</label><input type="number" id="temp" step="0.1" min="34" max="42" placeholder="36.5"></div>
-          <div class="health-field"><label>Febre?</label>
-            <select id="fever"><option value="">Não mediu</option><option>Não tem</option><option>Abaixo de 38°</option><option>Acima de 38°</option></select>
-          </div>
-        </div>
-        <p class="sublabel">Sintomas</p>
-        <div class="symptom-tags">
-          <span class="stag" onclick="this.classList.toggle('on')">Coriza</span>
-          <span class="stag" onclick="this.classList.toggle('on')">Tosse</span>
-          <span class="stag" onclick="this.classList.toggle('on')">Irritada</span>
-          <span class="stag" onclick="this.classList.toggle('on')">Vômito</span>
-          <span class="stag" onclick="this.classList.toggle('on')">Diarreia</span>
-          <span class="stag" onclick="this.classList.toggle('on')">Gases</span>
-          <span class="stag" onclick="this.classList.toggle('on')">Cólica</span>
-          <span class="stag" onclick="this.classList.toggle('on')">Erupção</span>
-        </div>
-        <p class="sublabel" style="margin-top:0.9rem">Remédios</p>
-        <div id="medsRows">
-          <div class="meds-row"><input type="text" placeholder="Remédio"><input type="text" placeholder="Dose"><input type="time"></div>
-        </div>
-        <button class="add-btn" onclick="addMed()">+ Remédio</button>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="sec-head"><span class="sec-icon">🎉</span><span class="sec-title">Atividades do dia</span></div>
-      <div class="sec-body">
-        <div class="checklist" id="checklist">
-          <div class="check-item" onclick="togCheck(this)" data-val="Banho"><div class="check-box"></div><span class="check-text">🛁 Banho</span></div>
-          <div class="check-item" onclick="togCheck(this)" data-val="Brincadeiras"><div class="check-box"></div><span class="check-text">🎲 Brincadeiras</span></div>
-          <div class="check-item" onclick="togCheck(this)" data-val="Passeio"><div class="check-box"></div><span class="check-text">🌳 Passeio</span></div>
-          <div class="check-item" onclick="togCheck(this)" data-val="Leitura"><div class="check-box"></div><span class="check-text">📖 Leitura</span></div>
-          <div class="check-item" onclick="togCheck(this)" data-val="Música"><div class="check-box"></div><span class="check-text">🎵 Música</span></div>
-          <div class="check-item" onclick="togCheck(this)" data-val="Massagem"><div class="check-box"></div><span class="check-text">🤲 Massagem</span></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="sec-head"><span class="sec-icon">📝</span><span class="sec-title">Observações</span></div>
-      <div class="sec-body"><textarea id="notes" placeholder="Algo especial, comportamentos novos, dúvidas para os pais…"></textarea></div>
-    </div>
-
-    <div class="submit-area">
-      <button class="btn-action wpp" onclick="sendWhatsApp()">📱 WhatsApp</button>
-      <button class="btn-action save" onclick="saveRecord()">💾 Salvar</button>
     </div>
   </div>
 
-  <!-- HIST TAB -->
-  <div id="babaHist" style="display:none;padding-top:0.5rem;">
-    <div id="histList"></div>
-    <p id="histEmpty" style="text-align:center;color:var(--soft);font-size:0.9rem;margin-top:2rem;display:none;">Nenhum registro ainda 🍼</p>
+  <!-- Feed do dia -->
+  <div class="feed-wrap">
+    <div class="feed-label">Registros de hoje</div>
+    <div id="feedDia"><div class="feed-empty">Nenhum evento ainda — toque em uma ação abaixo</div></div>
+  </div>
+
+  <!-- Ações -->
+  <div class="section-row" style="margin-top:1rem;">
+    <div class="section-label">Registrar</div>
+  </div>
+  <div class="action-grid">
+    <div class="ac ac-blue" onclick="abrirSheet('shHumor')">
+      <div class="ac-wrap">😊</div><div class="ac-name">Humor</div>
+    </div>
+    <div class="ac ac-orange" onclick="abrirSheet('shAlim')">
+      <div class="ac-wrap">🍼</div><div class="ac-name">Mamadeira</div>
+    </div>
+    <div class="ac ac-pink" onclick="abrirSheet('shPapa')">
+      <div class="ac-wrap">🥣</div><div class="ac-name">Papa</div>
+    </div>
+    <div class="ac ac-purple" onclick="abrirSheet('shSono')">
+      <div class="ac-wrap">😴</div><div class="ac-name">Sono</div>
+    </div>
+    <div class="ac ac-yellow" onclick="abrirSheet('shFralda')">
+      <div class="ac-wrap">🧷</div><div class="ac-name">Fralda</div>
+    </div>
+    <div class="ac ac-red" onclick="abrirSheet('shSaude')">
+      <div class="ac-wrap">🌡️</div><div class="ac-name">Saúde</div>
+    </div>
+    <div class="ac ac-green" onclick="abrirSheet('shAtiv')">
+      <div class="ac-wrap">🎉</div><div class="ac-name">Atividade</div>
+    </div>
+    <div class="ac ac-teal" onclick="abrirSheet('shObs')">
+      <div class="ac-wrap">📝</div><div class="ac-name">Obs</div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="btn-wpp" onclick="gerarRelatorio()">📱 Relatório WhatsApp</button>
+    <button class="btn-wpp" style="background:var(--blue);" onclick="logoff()">⎋ Sair</button>
   </div>
 </div>
 
-<!-- screenJosiLock removido — fluxo agora é via screenSetup -->
-
-<!-- ===== JOSI DASH ===== -->
+<!-- ══ JOSI ══ -->
 <div id="screenJosi" class="screen">
-  <div class="header">
-    <h1>🌸 Painel dos Pais</h1>
-    <div class="date-badge" id="josiDateBadge"></div>
-    <button onclick="josiLogout()" style="margin-top:0.4rem;background:none;border:1px solid rgba(190,24,93,0.3);border-radius:99px;padding:0.2rem 0.9rem;font-size:0.72rem;font-weight:700;color:var(--rose-dark);cursor:pointer;font-family:inherit;">Sair do painel</button>
-  </div>
-
-  <!-- TEMA NO PAINEL TAMBÉM -->
-  <div class="section" style="margin-top:0.9rem;">
-    <div class="sec-head" onclick="togTemaJosi()" style="cursor:pointer;justify-content:space-between;">
-      <div style="display:flex;align-items:center;gap:0.6rem;">
-        <span class="sec-icon">🎨</span><span class="sec-title">Tema</span>
-      </div>
-      <span id="temaTogJosi" style="font-size:0.8rem;color:var(--soft);font-weight:700;">▼ mostrar</span>
+  <div class="josi-header">
+    <div class="jh-top">
+      <div class="jh-title">🌸 Painel dos Pais</div>
+      <button class="btn-sair" onclick="josiLogout()">Sair</button>
     </div>
-    <div class="tema-picker" id="temaPickerJosi" style="display:none;">
-      <div class="tema-opt t-menina" onclick="setTema('menina',this)" title="Menina"></div>
-      <div class="tema-opt t-menino" onclick="setTema('menino',this)" title="Menino"></div>
-      <div class="tema-opt t-neutro" onclick="setTema('neutro',this)" title="Neutro"></div>
-      <div class="tema-opt t-amarelo" onclick="setTema('amarelo',this)" title="Amarelo"></div>
-      <div class="tema-opt t-lilas" onclick="setTema('lilas',this)" title="Lilás"></div>
+    <div class="jh-date" id="josiDate"></div>
+  </div>
+
+  <div class="profile-card" style="margin-top:.8rem;">
+    <div class="profile-avatar" id="profileAvatar">🍼</div>
+    <div style="flex:1;">
+      <div class="profile-name" id="profileName">Bebê</div>
+      <div class="profile-detail" id="profileDetail">Configure o perfil</div>
+    </div>
+    <button class="profile-edit" onclick="abrirPerfil()">Editar</button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-num" id="statDays">—</div><div class="stat-lbl">Dias</div></div>
+    <div class="stat-card"><div class="stat-num" id="statEvents">—</div><div class="stat-lbl">Eventos</div></div>
+    <div class="stat-card"><div class="stat-num" id="statPee">—</div><div class="stat-lbl">Xixi/dia</div></div>
+    <div class="stat-card"><div class="stat-num" id="statPoo">—</div><div class="stat-lbl">Cocô/dia</div></div>
+  </div>
+
+  <div class="psec" style="margin-top:.25rem;">
+    <div class="psec-title">😊 Humor</div>
+    <div id="moodChart"></div>
+  </div>
+
+  <div class="psec" style="margin-top:.5rem;">
+    <div class="psec-title">⚡ Feed em tempo real</div>
+    <div class="live-feed" id="liveFeed">
+      <div class="loading"><div class="spinner"></div><br>Carregando…</div>
     </div>
   </div>
 
-  <div class="dash-grid" id="statsGrid">
-    <div class="stat-card"><div class="stat-num" id="statDays">—</div><div class="stat-label">Dias registrados</div></div>
-    <div class="stat-card"><div class="stat-num" id="statPee">—</div><div class="stat-label">Xixi (média/dia)</div></div>
-    <div class="stat-card"><div class="stat-num" id="statPoo">—</div><div class="stat-label">Cocô (média/dia)</div></div>
-    <div class="stat-card"><div class="stat-num" id="statSleep">—</div><div class="stat-label">Sono médio/dia</div></div>
+  <div class="logout-row">
+    <button class="btn-logout" onclick="josiLogout()">Sair do painel</button>
   </div>
-
-  <div class="dash-title">😊 Humor nos últimos dias</div>
-  <div style="padding:0 0.75rem;" id="moodChart"></div>
-
-  <div class="dash-title">📋 Todos os registros</div>
-  <div id="josiHistList">
-    <div class="loading"><div class="spinner"></div><br>Carregando…</div>
-  </div>
-
-
 </div>
 
-<!-- MODAL WHATSAPP -->
-<div class="wpp-overlay" id="wppOverlay" style="display:none;" onclick="if(event.target===this)fecharWpp()">
+<!-- ══ SHEETS ══ -->
+
+<!-- HUMOR -->
+<div class="sh-overlay" id="shHumor" onclick="if(event.target===this)fecharSheet('shHumor')">
+  <div class="sheet"><div class="sh-handle"></div>
+    <div class="sh-header"><div class="sh-title">😊 Humor da bebê</div><button class="sh-close" onclick="fecharSheet('shHumor')">✕</button></div>
+    <div class="sh-body">
+      <div class="mood-row">
+        <div class="mood-opt" onclick="tmpMood=this.dataset.v;document.querySelectorAll('.mood-opt').forEach(x=>x.classList.remove('sel'));this.classList.add('sel')" data-v="😭 Muito chateada"><span class="em">😭</span><span class="ml">Chateada</span></div>
+        <div class="mood-opt" onclick="tmpMood=this.dataset.v;document.querySelectorAll('.mood-opt').forEach(x=>x.classList.remove('sel'));this.classList.add('sel')" data-v="😐 Neutro"><span class="em">😐</span><span class="ml">Neutro</span></div>
+        <div class="mood-opt" onclick="tmpMood=this.dataset.v;document.querySelectorAll('.mood-opt').forEach(x=>x.classList.remove('sel'));this.classList.add('sel')" data-v="🙂 Bem"><span class="em">🙂</span><span class="ml">Bem</span></div>
+        <div class="mood-opt" onclick="tmpMood=this.dataset.v;document.querySelectorAll('.mood-opt').forEach(x=>x.classList.remove('sel'));this.classList.add('sel')" data-v="😄 Ótima!"><span class="em">😄</span><span class="ml">Ótima!</span></div>
+      </div>
+      <button class="sh-save" onclick="salvarEvento('humor',{valor:tmpMood},tmpMood,'😊','#E3F0FF');fecharSheet('shHumor')">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAMADEIRA -->
+<div class="sh-overlay" id="shAlim" onclick="if(event.target===this)fecharSheet('shAlim')">
+  <div class="sheet"><div class="sh-handle"></div>
+    <div class="sh-header"><div class="sh-title">🍼 Mamadeira</div><button class="sh-close" onclick="fecharSheet('shAlim')">✕</button></div>
+    <div class="sh-body">
+      <div class="fg">
+        <div class="fr"><span class="fl">Horário</span><input type="time" id="alimHora"></div>
+        <div class="fr"><span class="fl">Quantidade</span><input type="text" id="alimQty" placeholder="180ml"></div>
+        <div class="fr"><span class="fl">Observação</span><input type="text" id="alimObs" placeholder="opcional"></div>
+      </div>
+      <button class="sh-save" onclick="salvarAlim()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAPA -->
+<div class="sh-overlay" id="shPapa" onclick="if(event.target===this)fecharSheet('shPapa')">
+  <div class="sheet"><div class="sh-handle"></div>
+    <div class="sh-header"><div class="sh-title">🥣 Papa / Sólidos</div><button class="sh-close" onclick="fecharSheet('shPapa')">✕</button></div>
+    <div class="sh-body">
+      <div class="fg">
+        <div class="fr"><span class="fl">Horário</span><input type="time" id="papaHora"></div>
+        <div class="fr"><span class="fl">O que comeu</span><input type="text" id="papaOque" placeholder="Ex: papa de fruta"></div>
+        <div class="fr"><span class="fl">Quantidade</span><input type="text" id="papaQty" placeholder="opcional"></div>
+      </div>
+      <button class="sh-save" onclick="salvarPapa()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- SONO -->
+<div class="sh-overlay" id="shSono" onclick="if(event.target===this)fecharSheet('shSono')">
+  <div class="sheet"><div class="sh-handle"></div>
+    <div class="sh-header"><div class="sh-title">😴 Sono</div><button class="sh-close" onclick="fecharSheet('shSono')">✕</button></div>
+    <div class="sh-body">
+      <div class="fg">
+        <div class="fr"><span class="fl">Dormiu</span><input type="time" id="sonoInicio" oninput="calcSonoDur()"></div>
+        <div class="fr"><span class="fl">Acordou</span><input type="time" id="sonoFim" oninput="calcSonoDur()"></div>
+        <div class="fr"><span class="fl">Duração</span><span id="sonoDur" style="flex:1;text-align:right;font-size:.85rem;color:var(--blue);font-weight:600;">--</span></div>
+      </div>
+      <button class="sh-save" onclick="salvarSono()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- FRALDA -->
+<div class="sh-overlay" id="shFralda" onclick="if(event.target===this)fecharSheet('shFralda')">
+  <div class="sheet"><div class="sh-handle"></div>
+    <div class="sh-header"><div class="sh-title">🧷 Fralda</div><button class="sh-close" onclick="fecharSheet('shFralda')">✕</button></div>
+    <div class="sh-body">
+      <div class="fg" style="overflow:visible;">
+        <div class="fr" style="gap:1rem;padding:.9rem;">
+          <span class="fl" style="min-width:auto;">Tipo</span>
+          <div style="display:flex;gap:.5rem;flex:1;">
+            <button id="btnXixi" onclick="selectFralda('xixi')" style="flex:1;padding:.7rem;border-radius:var(--r);border:2px solid transparent;background:var(--bg);font-family:var(--font);font-size:.9rem;font-weight:600;cursor:pointer;transition:all .14s;">💛 Xixi</button>
+            <button id="btnCoco" onclick="selectFralda('coco')" style="flex:1;padding:.7rem;border-radius:var(--r);border:2px solid transparent;background:var(--bg);font-family:var(--font);font-size:.9rem;font-weight:600;cursor:pointer;transition:all .14s;">💩 Cocô</button>
+            <button id="btnMisto" onclick="selectFralda('misto')" style="flex:1;padding:.7rem;border-radius:var(--r);border:2px solid transparent;background:var(--bg);font-family:var(--font);font-size:.9rem;font-weight:600;cursor:pointer;transition:all .14s;">🔄 Misto</button>
+          </div>
+        </div>
+      </div>
+      <button class="sh-save" onclick="salvarFralda()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- SAÚDE -->
+<div class="sh-overlay" id="shSaude" onclick="if(event.target===this)fecharSheet('shSaude')">
+  <div class="sheet"><div class="sh-handle"></div>
+    <div class="sh-header"><div class="sh-title">🌡️ Saúde</div><button class="sh-close" onclick="fecharSheet('shSaude')">✕</button></div>
+    <div class="sh-body">
+      <div class="fg">
+        <div class="fr"><span class="fl">Temperatura</span><input type="number" id="temp" step="0.1" min="34" max="42" placeholder="36.5"></div>
+        <div class="fr"><span class="fl">Febre</span>
+          <select id="fever" style="flex:1;background:none;border:none;outline:none;font-family:var(--font);font-size:.88rem;color:var(--text1);text-align:right;">
+            <option value="">Não mediu</option><option>Não tem</option><option>Abaixo de 38°</option><option>Acima de 38°</option>
+          </select>
+        </div>
+      </div>
+      <div style="font-size:.72rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.45rem;">Sintomas</div>
+      <div class="tag-wrap" id="symTags">
+        <span class="tag" onclick="this.classList.toggle('on')">Coriza</span>
+        <span class="tag" onclick="this.classList.toggle('on')">Tosse</span>
+        <span class="tag" onclick="this.classList.toggle('on')">Irritada</span>
+        <span class="tag" onclick="this.classList.toggle('on')">Vômito</span>
+        <span class="tag" onclick="this.classList.toggle('on')">Diarreia</span>
+        <span class="tag" onclick="this.classList.toggle('on')">Gases</span>
+        <span class="tag" onclick="this.classList.toggle('on')">Cólica</span>
+        <span class="tag" onclick="this.classList.toggle('on')">Erupção</span>
+      </div>
+      <div style="font-size:.72rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin:.6rem 0 .45rem;">Remédio</div>
+      <div class="fg">
+        <div class="fr"><span class="fl">Nome</span><input type="text" id="medNome" placeholder="Ex: Buscopan"></div>
+        <div class="fr"><span class="fl">Dose</span><input type="text" id="medDose" placeholder="Ex: 2ml"></div>
+        <div class="fr"><span class="fl">Horário</span><input type="time" id="medHora"></div>
+      </div>
+      <button class="sh-save" onclick="salvarSaude()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ATIVIDADE -->
+<div class="sh-overlay" id="shAtiv" onclick="if(event.target===this)fecharSheet('shAtiv')">
+  <div class="sheet"><div class="sh-handle"></div>
+    <div class="sh-header"><div class="sh-title">🎉 Atividade</div><button class="sh-close" onclick="fecharSheet('shAtiv')">✕</button></div>
+    <div class="sh-body">
+      <div class="tag-wrap" id="actTags">
+        <span class="act-tag" onclick="selAtiv(this)" data-v="Banho">🛁 Banho</span>
+        <span class="act-tag" onclick="selAtiv(this)" data-v="Brincadeiras">🎲 Brincadeiras</span>
+        <span class="act-tag" onclick="selAtiv(this)" data-v="Passeio">🌳 Passeio</span>
+        <span class="act-tag" onclick="selAtiv(this)" data-v="Leitura">📖 Leitura</span>
+        <span class="act-tag" onclick="selAtiv(this)" data-v="Música">🎵 Música</span>
+        <span class="act-tag" onclick="selAtiv(this)" data-v="Massagem">🤲 Massagem</span>
+        <span class="act-tag" onclick="selAtiv(this)" data-v="Parque">🛝 Parque</span>
+        <span class="act-tag" onclick="selAtiv(this)" data-v="Natação">🏊 Natação</span>
+      </div>
+      <button class="sh-save" onclick="salvarAtiv()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- OBS -->
+<div class="sh-overlay" id="shObs" onclick="if(event.target===this)fecharSheet('shObs')">
+  <div class="sheet"><div class="sh-handle"></div>
+    <div class="sh-header"><div class="sh-title">📝 Observação</div><button class="sh-close" onclick="fecharSheet('shObs')">✕</button></div>
+    <div class="sh-body">
+      <div class="fg">
+        <div class="fr"><textarea id="obsTexto" placeholder="Descreva o que aconteceu…"></textarea></div>
+      </div>
+      <button class="sh-save" onclick="salvarObs()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- PERFIL -->
+<div class="sh-overlay" id="shPerfil" onclick="if(event.target===this)fecharSheet('shPerfil')">
+  <div class="sheet"><div class="sh-handle"></div>
+    <div class="sh-header"><div class="sh-title">👶 Perfil da Bebê</div><button class="sh-close" onclick="fecharSheet('shPerfil')">✕</button></div>
+    <div class="sh-body">
+      <div class="fg">
+        <div class="fr"><span class="fl">Nome</span><input type="text" id="perfilNome" placeholder="Nome"></div>
+        <div class="fr"><span class="fl">Nascimento</span><input type="date" id="perfilNasc"></div>
+        <div class="fr"><span class="fl">Foto (URL)</span><input type="url" id="perfilFoto" placeholder="https://…"></div>
+        <div class="fr"><span class="fl">Peso (kg)</span><input type="number" id="perfilPeso" step="0.01" placeholder="3.50"></div>
+        <div class="fr"><span class="fl">Altura (cm)</span><input type="number" id="perfilAltura" step="0.1" placeholder="50.0"></div>
+      </div>
+      <button class="sh-save" onclick="salvarPerfil()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- WPP -->
+<div class="wpp-overlay" id="wppOverlay" onclick="if(event.target===this)fecharWpp()">
   <div class="wpp-modal">
-    <h3>📱 Relatório para enviar</h3>
-    <textarea id="wppText" readonly onclick="this.select()"></textarea>
+    <div class="wpp-handle"></div>
+    <div class="wpp-title">📱 Relatório do dia</div>
+    <textarea class="wpp-ta" id="wppText" readonly onclick="this.select()"></textarea>
     <div class="wpp-btns">
-      <button class="btn-copy" id="btnCopy" onclick="copiarWpp()">📋 Copiar tudo</button>
-      <button class="btn-wpp-open" onclick="abrirWpp()">Abrir WhatsApp</button>
-      <button class="btn-fechar" onclick="fecharWpp()">Fechar</button>
+      <button class="btn-copy" id="btnCopy" onclick="copiarWpp()">📋 Copiar</button>
+      <button class="btn-owpp" onclick="abrirWpp()">WhatsApp ↗</button>
+      <button class="btn-close-wpp" onclick="fecharWpp()">Fechar</button>
     </div>
   </div>
 </div>
@@ -459,643 +564,619 @@ textarea{min-height:85px;resize:vertical;}
 <div class="toast" id="toast"></div>
 
 <script>
-// ===== SUPABASE CONFIG =====
+// ══ CONFIG ══
 const SB_URL = 'https://ywdpxbhaslvmbyhtebsh.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3ZHB4Ymhhc2x2bWJ5aHRlYnNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4ODMyNTUsImV4cCI6MjA5NDQ1OTI1NX0.xeLbgFHD7DOtJm2MPBNL3mMyX0x0zsxyxswV24lOSMw';
-
-async function sbInsert(data) {
-  try {
-    const r = await fetch(SB_URL+'/rest/v1/registros', {
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'Accept':'application/json',
-        'apikey':SB_KEY,
-        'Authorization':'Bearer '+SB_KEY,
-        'Prefer':'return=minimal'
-      },
-      body: JSON.stringify(data)
-    });
-    if(!r.ok){
-      const err=await r.text();
-      console.error('sbInsert error',r.status,err);
-    }
-    return r.ok;
-  } catch(e) { console.error('sbInsert exception:', e); return false; }
-}
-
-async function sbSelect(familiaId) {
-  try {
-    const r = await fetch(SB_URL+'/rest/v1/registros?familia_id=eq.'+encodeURIComponent(familiaId)+'&order=created_at.desc&limit=90', {
-      headers:{
-        'Accept':'application/json',
-        'apikey':SB_KEY,
-        'Authorization':'Bearer '+SB_KEY
-      }
-    });
-    if(!r.ok){ console.error('sbSelect error',r.status); return []; }
-    return await r.json();
-  } catch(e) { console.error('sbSelect exception:', e); return []; }
-}
-
-// ===== APPS SCRIPT (Google Sheets auth) =====
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwsfNrpzEh5eQqtLR02QFpZI8r6IUeySRmMQ_9SNhI3kJ87XzkfpJwUn0xB1TI8UP0j/exec';
 
-// Apps Script Web App suporta CORS por padrão quando publicado como "Qualquer pessoa"
-async function sheetsCall(payload) {
+// ══ SUPABASE ══
+async function sbEvento(dado) {
   try {
-    const r = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
+    const r = await fetch(SB_URL+'/rest/v1/eventos', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation'},
+      body: JSON.stringify(dado)
     });
-    if (!r.ok) { console.error('sheetsCall HTTP', r.status); return null; }
-    return await r.json();
-  } catch(e) {
-    console.error('sheetsCall:', e);
-    return null;
-  }
+    if(!r.ok){ const e=await r.text(); console.error('sbEvento',r.status,e); return null; }
+    const rows = await r.json();
+    return rows[0];
+  } catch(e){ console.error('sbEvento:',e); return null; }
 }
 
-// ===== STATE =====
-let FAMILIA_ID = '';
-let mood = '';
-let pee = 0, poo = 0;
-let temaAtual = 'menina';
+async function sbDeleteEvento(id) {
+  try {
+    const r = await fetch(SB_URL+'/rest/v1/eventos?id=eq.'+id, {
+      method:'DELETE',
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+    });
+    return r.ok;
+  } catch(e){ return false; }
+}
 
-// ===== ROUTING =====
+async function sbSelectEventos(familiaId, dataStr) {
+  // busca eventos do dia (ou todos se dataStr null)
+  try {
+    let url = SB_URL+'/rest/v1/eventos?familia_id=eq.'+encodeURIComponent(familiaId)+'&order=created_at.desc&limit=200';
+    const r = await fetch(url, { headers:{'Accept':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY} });
+    if(!r.ok) return [];
+    return await r.json();
+  } catch(e){ return []; }
+}
+
+// ══ SHEETS ══
+async function sheetsCall(payload) {
+  try {
+    const r = await fetch(SCRIPT_URL, {method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+    if(!r.ok) return null;
+    return await r.json();
+  } catch(e){ return null; }
+}
+
+// ══ STATE ══
+let FAMILIA_ID = '';
+let tmpMood = '';
+let fraldaSel = '';
+let ativSel = '';
+let eventosHoje = []; // cache local
+
+// ══ ROUTER ══
 function router() {
   FAMILIA_ID = localStorage.getItem('familiaId') || '';
-  const perfil = sessionStorage.getItem('perfilAtivo'); // 'baba' ou 'pais'
-  if (!FAMILIA_ID || !perfil) {
-    showScreen('screenSetup');
-    return;
-  }
+  const perfil = sessionStorage.getItem('perfilAtivo');
+  if (!FAMILIA_ID || !perfil) { showScreen('screenSetup'); return; }
   if (perfil === 'pais') {
-    if (sessionStorage.getItem('josiUnlocked')) { showScreen('screenJosi'); renderJosiDash(); }
-    else showScreen('screenSetup'); // volta pro setup se sessão expirou
+    if (sessionStorage.getItem('josiUnlocked')) { showScreen('screenJosi'); initJosi(); }
+    else showScreen('screenSetup');
   } else {
     showScreen('screenBaba');
+    initBaba();
   }
 }
 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  const el = document.getElementById(id);
-  if (el) el.classList.add('active');
+  document.getElementById(id).classList.add('active');
 }
 
-function showBaba() { showScreen('screenBaba'); }
-
-// ===== ESCOLHA E LOGIN =====
-function escolher(perfil) {
-  document.getElementById('escolhaGrid').style.display = 'none';
-  document.getElementById('setupMsg').textContent = '';
-  if (perfil === 'baba') {
-    document.getElementById('loginBaba').classList.add('show');
-    setTimeout(()=>document.getElementById('setupCode').focus(), 100);
-  } else {
-    document.getElementById('loginPais').classList.add('show');
-    setTimeout(()=>document.getElementById('paisCodigo').focus(), 100);
-  }
+// ══ ENTRADA ══
+function escolher(p) {
+  document.getElementById('choiceGrid').style.display='none';
+  document.getElementById('login'+p.charAt(0).toUpperCase()+p.slice(1)).classList.add('show');
+  setTimeout(()=>document.getElementById(p==='baba'?'setupCode':'paisCodigo').focus(),150);
 }
-
 function voltarEscolha() {
-  document.getElementById('escolhaGrid').style.display = 'grid';
-  document.getElementById('loginBaba').classList.remove('show');
-  document.getElementById('loginPais').classList.remove('show');
-  document.getElementById('setupMsg').textContent = 'Quem está acessando?';
-  document.getElementById('setupMsg').style.color = '';
+  document.getElementById('choiceGrid').style.display='grid';
+  ['loginBaba','loginPais'].forEach(id=>document.getElementById(id).classList.remove('show'));
+  ['errBaba','errPais'].forEach(id=>document.getElementById(id).textContent='');
 }
-
-function focusSenha() {
-  document.getElementById('paisSenha').focus();
-}
-
-function setErro(msg) {
-  const el = document.getElementById('setupMsg');
-  el.textContent = msg;
-  el.style.color = '#B91C1C';
-}
+function focusSenha(){ document.getElementById('paisSenha').focus(); }
 
 async function validarFamilia(code) {
-  const res = await sheetsCall({ action: 'validarSenha', familia_id: code, senha: '___CHECK___' });
-  if (!res) return { ok: false, erro: 'conexao' };
-  if (res.motivo === 'familia') return { ok: false, erro: 'nao_existe' };
-  if (res.motivo === 'inativo') return { ok: false, erro: 'inativo' };
-  return { ok: true, nome: res.nome };
+  const res = await sheetsCall({action:'validarSenha',familia_id:code,senha:'___CHECK___'});
+  if(!res) return {ok:false,erro:'conexao'};
+  if(res.motivo==='familia') return {ok:false,erro:'nao_existe'};
+  if(res.motivo==='inativo') return {ok:false,erro:'inativo'};
+  return {ok:true,nome:res.nome};
 }
 
 async function entrarFamilia() {
   const code = document.getElementById('setupCode').value.trim().toUpperCase();
-  if (code.length < 3) { toast('Digite o código da família'); return; }
-
-  const btn = document.getElementById('btnEntrar');
-  btn.textContent = 'Verificando…';
-  btn.disabled = true;
-
-  const check = await validarFamilia(code);
-
-  btn.textContent = 'Entrar 🍼';
-  btn.disabled = false;
-
-  if (!check.ok) {
-    const msgs = { conexao:'Erro de conexão. Tente novamente.', nao_existe:'Código não encontrado.', inativo:'Acesso desativado. Fale com os pais.' };
-    setErro(msgs[check.erro] || 'Erro.');
-    return;
+  if(code.length<3){document.getElementById('errBaba').textContent='Digite o código';return;}
+  const btn=document.getElementById('btnEntrar');
+  btn.textContent='Verificando…';btn.disabled=true;
+  const check=await validarFamilia(code);
+  btn.textContent='Entrar';btn.disabled=false;
+  if(!check.ok){
+    const msgs={conexao:'Erro de conexão.',nao_existe:'Código não encontrado.',inativo:'Acesso desativado.'};
+    document.getElementById('errBaba').textContent=msgs[check.erro]||'Erro.';return;
   }
-
-  FAMILIA_ID = code;
-  localStorage.setItem('familiaId', code);
-  localStorage.setItem('nomeFamilia', check.nome || code);
-  sessionStorage.setItem('perfilAtivo', 'baba');
-  showScreen('screenBaba');
+  FAMILIA_ID=code;
+  localStorage.setItem('familiaId',code);
+  localStorage.setItem('nomeFamilia',check.nome||code);
+  sessionStorage.setItem('perfilAtivo','baba');
+  showScreen('screenBaba');initBaba();
 }
 
 async function entrarPais() {
-  const code = document.getElementById('paisCodigo').value.trim().toUpperCase();
-  const senha = document.getElementById('paisSenha').value;
-  if (code.length < 3) { toast('Digite o código da família'); document.getElementById('paisCodigo').focus(); return; }
-  if (!senha) { toast('Digite a senha'); document.getElementById('paisSenha').focus(); return; }
-
-  const btn = document.getElementById('btnEntrarPais');
-  btn.textContent = 'Verificando…';
-  btn.disabled = true;
-
-  const res = await sheetsCall({ action: 'validarSenha', familia_id: code, senha });
-
-  btn.textContent = 'Entrar 🌸';
-  btn.disabled = false;
-
-  if (!res) { setErro('Erro de conexão. Tente novamente.'); return; }
-
-  if (res.valido) {
-    FAMILIA_ID = code;
-    localStorage.setItem('familiaId', code);
-    localStorage.setItem('nomeFamilia', res.nome || code);
-    sessionStorage.setItem('perfilAtivo', 'pais');
-    sessionStorage.setItem('josiUnlocked', '1');
-    showScreen('screenJosi');
-    renderJosiDash();
+  const code=document.getElementById('paisCodigo').value.trim().toUpperCase();
+  const senha=document.getElementById('paisSenha').value;
+  if(code.length<3){document.getElementById('errPais').textContent='Digite o código';return;}
+  if(!senha){document.getElementById('errPais').textContent='Digite a senha';return;}
+  const btn=document.getElementById('btnEntrarPais');
+  btn.textContent='Verificando…';btn.disabled=true;
+  const res=await sheetsCall({action:'validarSenha',familia_id:code,senha});
+  btn.textContent='Entrar';btn.disabled=false;
+  if(!res){document.getElementById('errPais').textContent='Erro de conexão.';return;}
+  if(res.valido){
+    FAMILIA_ID=code;
+    localStorage.setItem('familiaId',code);
+    localStorage.setItem('nomeFamilia',res.nome||code);
+    sessionStorage.setItem('perfilAtivo','pais');
+    sessionStorage.setItem('josiUnlocked','1');
+    showScreen('screenJosi');initJosi();
   } else {
-    const msgs = { senha:'Senha incorreta ❌', familia:'Código não encontrado.', inativo:'Acesso desativado.' };
-    setErro(msgs[res.motivo] || 'Acesso negado.');
-    document.getElementById('paisSenha').value = '';
+    const msgs={senha:'Senha incorreta.',familia:'Código não encontrado.',inativo:'Acesso desativado.'};
+    document.getElementById('errPais').textContent=msgs[res.motivo]||'Acesso negado.';
+    document.getElementById('paisSenha').value='';
   }
 }
 
-// ===== DATE =====
+// ══ BABA INIT ══
+function initBaba() {
+  setDate();
+  loadBabyProfile();
+  carregarEventosHoje();
+}
+
 function setDate() {
-  const now = new Date();
-  const opts = {weekday:'long',day:'2-digit',month:'long'};
-  const str = now.toLocaleDateString('pt-BR',opts);
-  document.getElementById('dateBadge').textContent = str;
-  document.getElementById('josiDateBadge').textContent = str;
+  const now=new Date();
+  const opts={weekday:'long',day:'2-digit',month:'long'};
+  const str=now.toLocaleDateString('pt-BR',opts);
+  ['dateBadge','josiDate'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=str;});
 }
 
-// ===== TEMA =====
-function setTema(tema, el) {
-  document.body.className = 'tema-'+tema;
-  temaAtual = tema;
-  localStorage.setItem('tema', tema);
-  document.querySelectorAll('.tema-opt').forEach(o=>o.classList.remove('active'));
-  document.querySelectorAll('.tema-opt.t-'+tema).forEach(o=>o.classList.add('active'));
+// ══ BABY PROFILE ══
+function getBabyProfile(){try{return JSON.parse(localStorage.getItem('babyProfile_'+FAMILIA_ID)||'{}')}catch(e){return{}}}
+
+function loadBabyProfile() {
+  const p=getBabyProfile();
+  const setAvatar=(el,foto)=>{if(!el)return;if(foto){el.innerHTML=`<img src="${foto}" onerror="this.parentNode.textContent='🍼'">`;}else el.textContent='🍼';};
+  setAvatar(document.getElementById('babyAvatarThumb'),p.foto);
+  setAvatar(document.getElementById('profileAvatar'),p.foto);
+  const nameEl=document.getElementById('babyNameThumb');
+  const profileNameEl=document.getElementById('profileName');
+  if(nameEl) nameEl.textContent=p.nome||'Bebê';
+  if(profileNameEl) profileNameEl.textContent=p.nome||'Bebê';
+  const ageEl=document.getElementById('babyAgeThumb');
+  if(ageEl) ageEl.textContent=p.nascimento?calcIdade(p.nascimento):'';
+  const detEl=document.getElementById('profileDetail');
+  if(detEl){
+    let det='';
+    if(p.nascimento) det+=calcIdade(p.nascimento);
+    if(p.peso) det+=(det?' · ':'')+p.peso+'kg';
+    if(p.altura) det+=(det?' · ':'')+p.altura+'cm';
+    detEl.textContent=det||'Configure o perfil';
+  }
 }
 
-function loadTema() {
-  const t = localStorage.getItem('tema') || 'menina';
-  document.body.className = 'tema-'+t;
-  temaAtual = t;
-  document.querySelectorAll('.tema-opt').forEach(o=>o.classList.remove('active'));
-  document.querySelectorAll('.tema-opt.t-'+t).forEach(o=>o.classList.add('active'));
+function calcIdade(nascStr) {
+  const nasc=new Date(nascStr);const now=new Date();
+  let anos=now.getFullYear()-nasc.getFullYear();
+  let meses=now.getMonth()-nasc.getMonth();
+  if(meses<0){anos--;meses+=12;}
+  if(anos===0) return meses+(meses===1?' mês':' meses');
+  if(meses===0) return anos+(anos===1?' ano':' anos');
+  return anos+(anos===1?' ano':' anos')+' e '+meses+(meses===1?' mês':' meses');
 }
 
-function togTema() {
-  const p=document.getElementById('temaPicker');
-  const tog=document.getElementById('temaTog');
-  const open=p.style.display==='none';
-  p.style.display=open?'flex':'none';
-  tog.textContent=open?'▲ ocultar':'▼ mostrar';
+function abrirPerfil() {
+  const p=getBabyProfile();
+  document.getElementById('perfilNome').value=p.nome||'';
+  document.getElementById('perfilNasc').value=p.nascimento||'';
+  document.getElementById('perfilFoto').value=p.foto||'';
+  document.getElementById('perfilPeso').value=p.peso||'';
+  document.getElementById('perfilAltura').value=p.altura||'';
+  abrirSheet('shPerfil');
 }
 
-function togTemaJosi() {
-  const p=document.getElementById('temaPickerJosi');
-  const tog=document.getElementById('temaTogJosi');
-  const open=p.style.display==='none';
-  p.style.display=open?'flex':'none';
-  tog.textContent=open?'▲ ocultar':'▼ mostrar';
+function salvarPerfil() {
+  const p={
+    nome:document.getElementById('perfilNome').value.trim(),
+    nascimento:document.getElementById('perfilNasc').value,
+    foto:document.getElementById('perfilFoto').value.trim(),
+    peso:document.getElementById('perfilPeso').value,
+    altura:document.getElementById('perfilAltura').value
+  };
+  localStorage.setItem('babyProfile_'+FAMILIA_ID,JSON.stringify(p));
+  loadBabyProfile();fecharSheet('shPerfil');toast('Perfil salvo ✓');
 }
 
-// ===== BABA TABS =====
-function babaTab(tab, btn) {
-  document.querySelectorAll('#screenBaba .tab').forEach(t=>t.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('babaForm').style.display = tab==='form'?'block':'none';
-  document.getElementById('babaHist').style.display = tab==='hist'?'block':'none';
-  if (tab==='hist') renderBabaHist();
+// ══ SHEETS (bottom sheets) ══
+function abrirSheet(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function fecharSheet(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow='';
 }
 
-// ===== MOOD =====
-function setMood(el, val) {
-  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));
-  el.classList.add('selected');
-  mood = val;
+// ══ SALVAR EVENTO ══
+async function salvarEvento(tipo, dado, descricao, icon, iconBg) {
+  if(!FAMILIA_ID){toast('Sem código de família');return;}
+  const agora = new Date();
+  const horaStr = agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  const dataStr = agora.toLocaleDateString('pt-BR');
+  const payload = { familia_id:FAMILIA_ID, tipo, dado };
+  toast('Salvando…');
+  const saved = await sbEvento(payload);
+  if(saved){
+    // Adiciona no feed local imediatamente
+    const ev = {...saved, _descricao:descricao, _icon:icon, _iconBg:iconBg, _hora:horaStr, _data:dataStr};
+    eventosHoje.unshift(ev);
+    renderFeedDia();
+    toast('Salvo! ✓');
+  } else {
+    toast('Erro ao salvar. Tente novamente.');
+  }
 }
 
-// ===== FEED =====
-function addFeed() {
-  const row = document.createElement('div');
-  row.className = 'feed-row';
-  row.innerHTML='<input type="time"><input type="text" placeholder="Mamadeira, papa…"><input type="text" placeholder="180ml">';
-  document.getElementById('feedRows').appendChild(row);
+// ══ HANDLERS POR TIPO ══
+function salvarAlim() {
+  const hora=document.getElementById('alimHora').value;
+  const qty=document.getElementById('alimQty').value.trim();
+  const obs=document.getElementById('alimObs').value.trim();
+  const desc='Mamadeira'+(hora?' às '+hora:'')+(qty?' · '+qty:'');
+  salvarEvento('mamadeira',{hora,qty,obs},desc,'🍼','#FFF3E0');
+  document.getElementById('alimHora').value='';
+  document.getElementById('alimQty').value='';
+  document.getElementById('alimObs').value='';
+  fecharSheet('shAlim');
 }
 
-function getFeed() {
-  const out=[];
-  document.querySelectorAll('#feedRows .feed-row').forEach(r=>{
-    const i=r.querySelectorAll('input');
-    const t=i[0].value,w=i[1].value.trim(),q=i[2].value.trim();
-    if(t||w) out.push((t?t+' - ':'')+w+(q?' ('+q+')':''));
-  });
-  return out;
+function salvarPapa() {
+  const hora=document.getElementById('papaHora').value;
+  const oque=document.getElementById('papaOque').value.trim();
+  const qty=document.getElementById('papaQty').value.trim();
+  if(!oque){toast('Informe o que comeu');return;}
+  const desc=oque+(hora?' às '+hora:'')+(qty?' · '+qty:'');
+  salvarEvento('papa',{hora,oque,qty},desc,'🥣','#FCE4EC');
+  document.getElementById('papaHora').value='';
+  document.getElementById('papaOque').value='';
+  document.getElementById('papaQty').value='';
+  fecharSheet('shPapa');
 }
 
-// ===== SLEEP =====
-function addSleep() {
-  const e=document.createElement('div');
-  e.className='sleep-entry';
-  e.innerHTML='<input type="time" class="s-start" oninput="calcDur(this)"><input type="time" class="s-end" oninput="calcDur(this)"><span class="sleep-dur">--</span><button class="del-btn" onclick="this.parentNode.remove()">✕</button>';
-  document.getElementById('sleepRows').appendChild(e);
-}
-
-function calcDur(inp) {
-  const entry=inp.closest('.sleep-entry');
-  const s=entry.querySelector('.s-start').value;
-  const e=entry.querySelector('.s-end').value;
-  const dur=entry.querySelector('.sleep-dur');
-  if(!s||!e){dur.textContent='--';return;}
+function calcSonoDur() {
+  const s=document.getElementById('sonoInicio').value;
+  const e=document.getElementById('sonoFim').value;
+  const el=document.getElementById('sonoDur');
+  if(!s||!e){el.textContent='--';return;}
   const [sh,sm]=s.split(':').map(Number);
   const [eh,em]=e.split(':').map(Number);
   let diff=(eh*60+em)-(sh*60+sm);
   if(diff<0)diff+=24*60;
   const h=Math.floor(diff/60),m=diff%60;
-  dur.textContent=h>0?h+'h'+(m>0?m+'min':''):m+'min';
+  el.textContent=h>0?h+'h'+(m>0?m+'min':''):m+'min';
 }
 
-function getSleep() {
-  const out=[];
-  document.querySelectorAll('#sleepRows .sleep-entry').forEach(r=>{
-    const s=r.querySelector('.s-start').value;
-    const e=r.querySelector('.s-end').value;
-    const d=r.querySelector('.sleep-dur').textContent;
-    if(s&&e&&d!=='--') out.push(s+' às '+e+' ('+d+')');
+function salvarSono() {
+  const inicio=document.getElementById('sonoInicio').value;
+  const fim=document.getElementById('sonoFim').value;
+  const dur=document.getElementById('sonoDur').textContent;
+  if(!inicio||!fim||dur==='--'){toast('Preencha início e fim');return;}
+  const desc=inicio+' → '+fim+' ('+dur+')';
+  salvarEvento('sono',{inicio,fim,dur},desc,'😴','#F3E5FF');
+  document.getElementById('sonoInicio').value='';
+  document.getElementById('sonoFim').value='';
+  document.getElementById('sonoDur').textContent='--';
+  fecharSheet('shSono');
+}
+
+function selectFralda(tipo) {
+  fraldaSel=tipo;
+  ['Xixi','Coco','Misto'].forEach(t=>{
+    const btn=document.getElementById('btn'+t);
+    if(btn) btn.style.background='var(--bg)';btn.style.borderColor='transparent';
   });
-  return out;
+  const map={xixi:'Xixi',coco:'Coco',misto:'Misto'};
+  const sel=document.getElementById('btn'+map[tipo]);
+  if(sel){sel.style.background='#E3F0FF';sel.style.borderColor='var(--blue)';}
 }
 
-function getTotalSleepMin() {
-  let total=0;
-  document.querySelectorAll('#sleepRows .sleep-entry').forEach(r=>{
-    const s=r.querySelector('.s-start').value;
-    const e=r.querySelector('.s-end').value;
-    if(!s||!e)return;
-    const [sh,sm]=s.split(':').map(Number);
-    const [eh,em]=e.split(':').map(Number);
-    let diff=(eh*60+em)-(sh*60+sm);
-    if(diff<0)diff+=24*60;
-    total+=diff;
+function salvarFralda() {
+  if(!fraldaSel){toast('Selecione o tipo de fralda');return;}
+  const labels={xixi:'💛 Xixi',coco:'💩 Cocô',misto:'🔄 Xixi + Cocô'};
+  const icons={xixi:'💛',coco:'💩',misto:'🔄'};
+  salvarEvento('fralda',{tipo:fraldaSel},labels[fraldaSel],icons[fraldaSel],'#FFFDE7');
+  fraldaSel='';
+  ['Xixi','Coco','Misto'].forEach(t=>{
+    const btn=document.getElementById('btn'+t);
+    if(btn){btn.style.background='var(--bg)';btn.style.borderColor='transparent';}
   });
-  return total;
+  fecharSheet('shFralda');
 }
 
-// ===== DIAPERS =====
-function bump(type,n) {
-  if(type==='pee'){pee=Math.max(0,pee+n);document.getElementById('peeCount').textContent=pee;}
-  else{poo=Math.max(0,poo+n);document.getElementById('pooCount').textContent=poo;}
+function salvarSaude() {
+  const temp=document.getElementById('temp').value;
+  const fever=document.getElementById('fever').value;
+  const syms=[...document.querySelectorAll('#symTags .tag.on')].map(t=>t.textContent).join(', ');
+  const medNome=document.getElementById('medNome').value.trim();
+  const medDose=document.getElementById('medDose').value.trim();
+  const medHora=document.getElementById('medHora').value;
+  if(!temp&&!fever&&!syms&&!medNome){toast('Preencha pelo menos um campo');return;}
+  let desc='';
+  if(temp) desc+='🌡️ '+temp+'°C ';
+  if(fever&&fever!=='Não mediu') desc+=fever+' ';
+  if(syms) desc+=syms+' ';
+  if(medNome) desc+='💊 '+medNome+(medDose?' '+medDose:'');
+  salvarEvento('saude',{temp,fever,syms,medNome,medDose,medHora},desc.trim(),'🌡️','#FFE8E8');
+  document.getElementById('temp').value='';
+  document.getElementById('fever').value='';
+  document.querySelectorAll('#symTags .tag').forEach(t=>t.classList.remove('on'));
+  document.getElementById('medNome').value='';
+  document.getElementById('medDose').value='';
+  document.getElementById('medHora').value='';
+  fecharSheet('shSaude');
 }
 
-// ===== HEALTH =====
-function getSymptoms() {
-  return [...document.querySelectorAll('.stag.on')].map(s=>s.textContent).join(', ');
+function selAtiv(el) {
+  // toggle seleção (pode selecionar múltiplas)
+  el.classList.toggle('on');
 }
 
-function addMed() {
-  const row=document.createElement('div');
-  row.className='meds-row';
-  row.innerHTML='<input type="text" placeholder="Remédio"><input type="text" placeholder="Dose"><input type="time">';
-  document.getElementById('medsRows').appendChild(row);
+function salvarAtiv() {
+  const sels=[...document.querySelectorAll('#actTags .act-tag.on')];
+  if(!sels.length){toast('Selecione uma atividade');return;}
+  const vals=sels.map(s=>s.dataset.v);
+  const desc=vals.join(', ');
+  salvarEvento('atividade',{atividades:vals},desc,'🎉','#E6F9EC');
+  sels.forEach(s=>s.classList.remove('on'));
+  fecharSheet('shAtiv');
 }
 
-function getMeds() {
-  const out=[];
-  document.querySelectorAll('#medsRows .meds-row').forEach(r=>{
-    const i=r.querySelectorAll('input');
-    const n=i[0].value.trim(),d=i[1].value.trim(),t=i[2].value;
-    if(n)out.push(n+(d?' '+d:'')+(t?' às '+t:''));
+function salvarObs() {
+  const texto=document.getElementById('obsTexto').value.trim();
+  if(!texto){toast('Escreva uma observação');return;}
+  salvarEvento('obs',{texto},texto.substring(0,60)+(texto.length>60?'…':''),'📝','#E0F7FA');
+  document.getElementById('obsTexto').value='';
+  fecharSheet('shObs');
+}
+
+// ══ FEED DO DIA ══
+async function carregarEventosHoje() {
+  const container=document.getElementById('feedDia');
+  container.innerHTML='<div class="loading"><div class="spinner"></div></div>';
+  const todos=await sbSelectEventos(FAMILIA_ID);
+  const hoje=new Date().toLocaleDateString('pt-BR');
+  eventosHoje=todos.filter(e=>{
+    const d=new Date(e.created_at);
+    return d.toLocaleDateString('pt-BR')===hoje;
   });
-  return out;
+  renderFeedDia();
 }
 
-// ===== CHECKLIST =====
-function togCheck(el) { el.classList.toggle('checked'); }
+const tipoConfig={
+  humor:{icon:'😊',bg:'#E3F0FF',label:'Humor'},
+  mamadeira:{icon:'🍼',bg:'#FFF3E0',label:'Mamadeira'},
+  papa:{icon:'🥣',bg:'#FCE4EC',label:'Papa'},
+  sono:{icon:'😴',bg:'#F3E5FF',label:'Sono'},
+  fralda:{icon:'🧷',bg:'#FFFDE7',label:'Fralda'},
+  saude:{icon:'🌡️',bg:'#FFE8E8',label:'Saúde'},
+  atividade:{icon:'🎉',bg:'#E6F9EC',label:'Atividade'},
+  obs:{icon:'📝',bg:'#E0F7FA',label:'Obs'},
+};
 
-function getActivities() {
-  return [...document.querySelectorAll('#checklist .check-item.checked')].map(el=>el.dataset.val).join(', ');
+function descEvento(e) {
+  const d=e.dado;
+  switch(e.tipo){
+    case 'humor': return d.valor||'';
+    case 'mamadeira': return [d.hora?'às '+d.hora:'',d.qty,d.obs].filter(Boolean).join(' · ');
+    case 'papa': return [d.oque,d.hora?'às '+d.hora:'',d.qty].filter(Boolean).join(' · ');
+    case 'sono': return d.inicio&&d.fim?d.inicio+' → '+d.fim+(d.dur?' ('+d.dur+')':''):'';
+    case 'fralda': const fl={xixi:'💛 Xixi',coco:'💩 Cocô',misto:'🔄 Misto'};return fl[d.tipo]||d.tipo;
+    case 'saude': {let s='';if(d.temp)s+='🌡️ '+d.temp+'°C ';if(d.syms)s+=d.syms+' ';if(d.medNome)s+='💊 '+d.medNome;return s.trim();}
+    case 'atividade': return Array.isArray(d.atividades)?d.atividades.join(', '):'';
+    case 'obs': return d.texto||'';
+    default: return '';
+  }
 }
 
-// ===== COLLECT =====
-function collectData() {
-  return {
-    familia_id: FAMILIA_ID,
-    date: new Date().toLocaleDateString('pt-BR'),
-    time: new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
-    mood,
-    feeding: getFeed().join(' | '),
-    sleep: getSleep().join(' | '),
-    sleep_min: getTotalSleepMin(),
-    pee,
-    poo,
-    temp: document.getElementById('temp').value||null,
-    fever: document.getElementById('fever').value||null,
-    symptoms: getSymptoms()||null,
-    meds: getMeds().join(' | ')||null,
-    activities: getActivities()||null,
-    notes: document.getElementById('notes').value.trim()||null
-  };
+function horaEvento(e) {
+  const d=new Date(e.created_at);
+  return d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 }
 
-// ===== WHATSAPP =====
-function formatMsg(d) {
-  const L = []; // linhas
-  const sep = '─────────────────';
-
-  L.push('*── Diario da Bebe ──*');
-  L.push('*Data:* ' + d.date + '   *Hora:* ' + d.time);
-  L.push(sep);
-
-  // HUMOR
-  if (d.mood) {
-    L.push('');
-    L.push('*HUMOR*');
-    L.push(d.mood);
+function renderFeedDia() {
+  const container=document.getElementById('feedDia');
+  if(!eventosHoje.length){
+    container.innerHTML='<div class="feed-empty">Nenhum evento ainda — toque em uma ação abaixo</div>';
+    return;
   }
-
-  // ALIMENTACAO
-  const feeds = d.feeding ? d.feeding.split('|').map(f=>f.trim()).filter(Boolean) : [];
-  if (feeds.length) {
-    L.push('');
-    L.push('*ALIMENTACAO (' + feeds.length + ' refeicoes)*');
-    feeds.forEach((f,i) => L.push((i+1)+'. ' + f));
-  } else {
-    L.push('');
-    L.push('*ALIMENTACAO*');
-    L.push('Nenhuma registrada');
-  }
-
-  // SONO
-  const sleeps = d.sleep ? d.sleep.split('|').map(s=>s.trim()).filter(Boolean) : [];
-  if (sleeps.length) {
-    L.push('');
-    L.push('*SONO (' + sleeps.length + ' periodo' + (sleeps.length>1?'s':'') + ')*');
-    sleeps.forEach((s,i) => L.push((i+1)+'. ' + s));
-    if (d.sleep_min && d.sleep_min > 0) {
-      const h = Math.floor(d.sleep_min/60), m = d.sleep_min%60;
-      L.push('Total: ' + (h>0 ? h+'h'+(m>0?m+'min':'') : m+'min'));
-    }
-  } else {
-    L.push('');
-    L.push('*SONO*');
-    L.push('Nenhum registrado');
-  }
-
-  // FRALDAS
-  L.push('');
-  L.push('*FRALDAS*');
-  L.push('Xixi: ' + d.pee + 'x   Coco: ' + d.poo + 'x');
-
-  // SAUDE
-  const temSaude = d.temp || (d.fever && d.fever !== 'Não mediu') || d.symptoms || d.meds;
-  if (temSaude) {
-    L.push('');
-    L.push('*SAUDE*');
-    if (d.temp) L.push('Temperatura: ' + d.temp + 'C');
-    if (d.fever && d.fever !== 'Não mediu') L.push('Febre: ' + d.fever);
-    if (d.symptoms) L.push('Sintomas: ' + d.symptoms);
-    if (d.meds) {
-      L.push('Remedios:');
-      d.meds.split('|').map(m=>m.trim()).filter(Boolean).forEach(m => L.push('  - ' + m));
-    }
-  }
-
-  // ATIVIDADES
-  if (d.activities) {
-    L.push('');
-    L.push('*ATIVIDADES*');
-    d.activities.split(',').map(a=>a.trim()).filter(Boolean).forEach(a => L.push('+ ' + a));
-  }
-
-  // OBSERVACOES
-  if (d.notes) {
-    L.push('');
-    L.push('*OBSERVACOES*');
-    L.push(d.notes);
-  }
-
-  L.push('');
-  L.push(sep);
-
-  return L.join('\n');
+  container.innerHTML=eventosHoje.map(e=>{
+    const cfg=tipoConfig[e.tipo]||{icon:'•',bg:'#F2F2F7',label:e.tipo};
+    const icon=e._icon||cfg.icon;
+    const bg=e._iconBg||cfg.bg;
+    const desc=e._descricao||descEvento(e);
+    const hora=e._hora||horaEvento(e);
+    return `<div class="evento-item">
+      <div class="ev-icon" style="background:${bg};">${icon}</div>
+      <div class="ev-info">
+        <div class="ev-tipo">${cfg.label}</div>
+        <div class="ev-detalhe">${desc}</div>
+      </div>
+      <span class="ev-hora">${hora}</span>
+      <button class="ev-del" onclick="deletarEvento('${e.id}')">✕</button>
+    </div>`;
+  }).join('');
 }
 
-function sendWhatsApp() {
-  const d = collectData();
-  const texto = formatMsg(d);
-  document.getElementById('wppText').value = texto;
-  document.getElementById('wppOverlay').style.display = 'flex';
-  document.getElementById('btnCopy').textContent = '📋 Copiar tudo';
-  document.getElementById('btnCopy').className = 'btn-copy';
-  // selecionar texto automaticamente
-  setTimeout(()=>{
-    const ta = document.getElementById('wppText');
-    ta.focus();
-    ta.select();
-  }, 100);
+async function deletarEvento(id) {
+  if(!confirm('Remover este evento?')) return;
+  const ok=await sbDeleteEvento(id);
+  if(ok){
+    eventosHoje=eventosHoje.filter(e=>e.id!==id);
+    renderFeedDia();
+    toast('Removido');
+  } else toast('Erro ao remover');
+}
+
+// ══ RELATÓRIO WHATSAPP ══
+function gerarRelatorio() {
+  const p=getBabyProfile();
+  const nome=p.nome||'Bebê';
+  const hoje=new Date().toLocaleDateString('pt-BR');
+  const L=[];
+  L.push('*-- Diario da '+nome+' --*');
+  L.push('Data: '+hoje);
+  L.push('─────────────────');
+
+  const por_tipo={};
+  eventosHoje.forEach(e=>{
+    if(!por_tipo[e.tipo]) por_tipo[e.tipo]=[];
+    por_tipo[e.tipo].push(e);
+  });
+
+  // Humor
+  if(por_tipo.humor){
+    L.push('');L.push('*HUMOR*');
+    por_tipo.humor.forEach(e=>L.push(horaEvento(e)+' - '+descEvento(e)));
+  }
+
+  // Alimentação
+  const alims=[...(por_tipo.mamadeira||[]),...(por_tipo.papa||[])].sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
+  if(alims.length){
+    L.push('');L.push('*ALIMENTACAO ('+alims.length+'x)*');
+    alims.forEach((e,i)=>L.push((i+1)+'. '+horaEvento(e)+' - '+descEvento(e)));
+  }
+
+  // Sono
+  if(por_tipo.sono){
+    L.push('');L.push('*SONO*');
+    por_tipo.sono.forEach(e=>L.push('• '+descEvento(e)));
+  }
+
+  // Fraldas
+  if(por_tipo.fralda){
+    L.push('');L.push('*FRALDAS*');
+    const xixi=por_tipo.fralda.filter(e=>e.dado.tipo==='xixi').length;
+    const coco=por_tipo.fralda.filter(e=>e.dado.tipo==='coco').length;
+    const misto=por_tipo.fralda.filter(e=>e.dado.tipo==='misto').length;
+    if(xixi) L.push('Xixi: '+xixi+'x');
+    if(coco) L.push('Coco: '+coco+'x');
+    if(misto) L.push('Misto: '+misto+'x');
+  }
+
+  // Saúde
+  if(por_tipo.saude){
+    L.push('');L.push('*SAUDE*');
+    por_tipo.saude.forEach(e=>L.push(horaEvento(e)+' - '+descEvento(e)));
+  }
+
+  // Atividades
+  if(por_tipo.atividade){
+    L.push('');L.push('*ATIVIDADES*');
+    const todas=por_tipo.atividade.flatMap(e=>Array.isArray(e.dado.atividades)?e.dado.atividades:[]);
+    [...new Set(todas)].forEach(a=>L.push('+ '+a));
+  }
+
+  // Obs
+  if(por_tipo.obs){
+    L.push('');L.push('*OBSERVACOES*');
+    por_tipo.obs.forEach(e=>L.push(e.dado.texto||''));
+  }
+
+  L.push('');L.push('─────────────────');
+  document.getElementById('wppText').value=L.join('\n');
+  document.getElementById('wppOverlay').classList.add('open');
+  document.getElementById('btnCopy').textContent='📋 Copiar';
+  document.getElementById('btnCopy').className='btn-copy';
+  setTimeout(()=>{const ta=document.getElementById('wppText');ta.focus();ta.select();},100);
 }
 
 function copiarWpp() {
-  const texto = document.getElementById('wppText').value;
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(texto).then(()=>{
-      const btn = document.getElementById('btnCopy');
-      btn.textContent = '✅ Copiado!';
-      btn.className = 'btn-copy copiado';
-      toast('Copiado! Cole no WhatsApp 📱');
-    }).catch(()=>{ copiarFallback(texto); });
-  } else {
-    copiarFallback(texto);
+  const texto=document.getElementById('wppText').value;
+  const ok=()=>{document.getElementById('btnCopy').textContent='✅ Copiado!';document.getElementById('btnCopy').className='btn-copy done';toast('Copiado! Cole no WhatsApp 📱');};
+  if(navigator.clipboard?.writeText) navigator.clipboard.writeText(texto).then(ok).catch(()=>fallbackCopy(ok));
+  else fallbackCopy(ok);
+}
+function fallbackCopy(ok){try{document.getElementById('wppText').select();document.execCommand('copy');ok();}catch(e){toast('Selecione e copie manualmente');}}
+function abrirWpp(){window.open('https://wa.me/?text='+encodeURIComponent(document.getElementById('wppText').value),'_blank');}
+function fecharWpp(){document.getElementById('wppOverlay').classList.remove('open');}
+
+// ══ JOSI PAINEL ══
+async function initJosi() {
+  setDate();
+  loadBabyProfile();
+  const todos=await sbSelectEventos(FAMILIA_ID);
+  renderJosiDash(todos);
+}
+
+function renderJosiDash(todos) {
+  if(!todos.length){
+    document.getElementById('liveFeed').innerHTML='<div class="loading">Nenhum evento ainda 🍼</div>';
+    ['statDays','statEvents','statPee','statPoo'].forEach(id=>document.getElementById(id).textContent='0');
+    return;
   }
-}
 
-function copiarFallback(texto) {
-  const ta = document.getElementById('wppText');
-  ta.select();
-  try {
-    document.execCommand('copy');
-    const btn = document.getElementById('btnCopy');
-    btn.textContent = '✅ Copiado!';
-    btn.className = 'btn-copy copiado';
-    toast('Copiado! Cole no WhatsApp 📱');
-  } catch(e) {
-    toast('Selecione o texto e copie manualmente');
-  }
-}
+  // Estatísticas
+  const dias=new Set(todos.map(e=>new Date(e.created_at).toLocaleDateString('pt-BR'))).size;
+  const fraldas=todos.filter(e=>e.tipo==='fralda');
+  const pee=fraldas.filter(e=>e.dado.tipo==='xixi').length+fraldas.filter(e=>e.dado.tipo==='misto').length;
+  const poo=fraldas.filter(e=>e.dado.tipo==='coco').length+fraldas.filter(e=>e.dado.tipo==='misto').length;
+  document.getElementById('statDays').textContent=dias;
+  document.getElementById('statEvents').textContent=todos.length;
+  document.getElementById('statPee').textContent=Math.round(pee/dias*10)/10;
+  document.getElementById('statPoo').textContent=Math.round(poo/dias*10)/10;
 
-function abrirWpp() {
-  const texto = document.getElementById('wppText').value;
-  const url = 'https://wa.me/?text=' + encodeURIComponent(texto);
-  window.open(url, '_blank');
-}
-
-function fecharWpp() {
-  document.getElementById('wppOverlay').style.display = 'none';
-}
-
-// ===== SAVE =====
-async function saveRecord() {
-  if(!FAMILIA_ID){toast('Configure o código da família primeiro');return;}
-  const d=collectData();
-  toast('Salvando…');
-  const ok=await sbInsert(d);
-  if(ok){toast('Salvo! ✨');resetForm();}
-  else toast('Erro ao salvar. Tente novamente.');
-}
-
-function resetForm() {
-  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));
-  mood='';
-  document.getElementById('feedRows').innerHTML='<div class="feed-row"><input type="time"><input type="text" placeholder="Mamadeira, papa…"><input type="text" placeholder="180ml"></div><div class="feed-row"><input type="time"><input type="text" placeholder="Mamadeira, papa…"><input type="text" placeholder="180ml"></div>';
-  document.getElementById('sleepRows').innerHTML='<div class="sleep-entry"><input type="time" class="s-start" oninput="calcDur(this)"><input type="time" class="s-end" oninput="calcDur(this)"><span class="sleep-dur">--</span></div>';
-  pee=0;poo=0;
-  document.getElementById('peeCount').textContent='0';
-  document.getElementById('pooCount').textContent='0';
-  document.getElementById('temp').value='';
-  document.getElementById('fever').value='';
-  document.querySelectorAll('.stag').forEach(s=>s.classList.remove('on'));
-  document.getElementById('medsRows').innerHTML='<div class="meds-row"><input type="text" placeholder="Remédio"><input type="text" placeholder="Dose"><input type="time"></div>';
-  document.querySelectorAll('#checklist .check-item').forEach(el=>el.classList.remove('checked'));
-  document.getElementById('notes').value='';
-}
-
-// ===== BABA HIST =====
-async function renderBabaHist() {
-  const list=document.getElementById('histList');
-  const empty=document.getElementById('histEmpty');
-  list.innerHTML='<div class="loading"><div class="spinner"></div><br>Carregando…</div>';
-  empty.style.display='none';
-  const history=await sbSelect(FAMILIA_ID);
-  if(!history.length){list.innerHTML='';empty.style.display='block';return;}
-  list.innerHTML=history.map(d=>`
-    <div class="hist-item">
-      <div class="hist-date">📅 ${d.date} às ${d.time}</div>
-      ${d.mood?`<div class="hist-row"><span>Humor</span><strong>${d.mood}</strong></div>`:''}
-      ${d.feeding?`<div class="hist-row"><span>Refeições</span><strong>${d.feeding.split('|').filter(s=>s.trim()).length}x</strong></div>`:''}
-      <div class="hist-row"><span>Fraldas</span><strong>${d.pee} xixi · ${d.poo} cocô</strong></div>
-      ${d.symptoms?`<div class="hist-row"><span>Sintomas</span><strong>${d.symptoms}</strong></div>`:''}
+  // Humor chart
+  const mc={'😭 Muito chateada':0,'😐 Neutro':0,'🙂 Bem':0,'😄 Ótima!':0};
+  todos.filter(e=>e.tipo==='humor').forEach(e=>{if(mc[e.dado.valor]!==undefined)mc[e.dado.valor]++;});
+  const maxM=Math.max(...Object.values(mc),1);
+  const mLabel={'😭 Muito chateada':'😭 Chateada','😐 Neutro':'😐 Neutro','🙂 Bem':'🙂 Bem','😄 Ótima!':'😄 Ótima!'};
+  const mColor={'😭 Muito chateada':'#FF9500','😐 Neutro':'#8E8E93','🙂 Bem':'#34C759','😄 Ótima!':'#007AFF'};
+  document.getElementById('moodChart').innerHTML=Object.entries(mc).map(([k,v])=>`
+    <div class="mood-bar">
+      <span class="mb-lbl">${mLabel[k]}</span>
+      <div class="mb-track"><div class="mb-fill" style="width:${Math.round(v/maxM*100)}%;background:${mColor[k]};"></div></div>
+      <span class="mb-n">${v}x</span>
     </div>`).join('');
+
+  // Live feed agrupado por dia
+  const porDia={};
+  todos.forEach(e=>{
+    const dia=new Date(e.created_at).toLocaleDateString('pt-BR');
+    if(!porDia[dia]) porDia[dia]=[];
+    porDia[dia].push(e);
+  });
+
+  let html='';
+  Object.entries(porDia).forEach(([dia,evs])=>{
+    html+=`<div class="live-day-group"><div class="live-day-label">${dia}</div>`;
+    evs.forEach(e=>{
+      const cfg=tipoConfig[e.tipo]||{icon:'•',bg:'#F2F2F7',label:e.tipo};
+      const desc=descEvento(e);
+      const hora=horaEvento(e);
+      html+=`<div class="live-item">
+        <div class="li-icon" style="background:${cfg.bg};">${cfg.icon}</div>
+        <div class="li-info">
+          <div class="li-tipo">${cfg.label}</div>
+          ${desc?`<div class="li-det">${desc}</div>`:''}
+        </div>
+        <span class="li-hora">${hora}</span>
+      </div>`;
+    });
+    html+='</div>';
+  });
+  document.getElementById('liveFeed').innerHTML=html;
 }
 
-// josiLogin substituído pelo fluxo de entrarPais()
-
-function josiLogout() {
-  sessionStorage.removeItem('josiUnlocked');
-  sessionStorage.removeItem('perfilAtivo');
-  voltarEscolha();
-  showScreen('screenSetup');
-}
-
-function logoff() {
+// ══ LOGOFF ══
+function logoff(){
   if(!confirm('Sair?')) return;
   localStorage.removeItem('familiaId');
   sessionStorage.removeItem('josiUnlocked');
   sessionStorage.removeItem('perfilAtivo');
-  FAMILIA_ID='';
-  voltarEscolha();
-  showScreen('screenSetup');
+  FAMILIA_ID='';eventosHoje=[];
+  voltarEscolha();showScreen('screenSetup');
+}
+function josiLogout(){
+  sessionStorage.removeItem('josiUnlocked');
+  sessionStorage.removeItem('perfilAtivo');
+  voltarEscolha();showScreen('screenSetup');
 }
 
-// ===== JOSI DASH =====
-async function renderJosiDash() {
-  document.getElementById('josiHistList').innerHTML='<div class="loading"><div class="spinner"></div><br>Carregando…</div>';
-  const history=await sbSelect(FAMILIA_ID);
-
-  if(!history.length){
-    document.getElementById('josiHistList').innerHTML='<p style="text-align:center;color:var(--soft);padding:2rem;font-size:0.9rem;">Nenhum registro ainda 🍼</p>';
-    document.getElementById('statDays').textContent='0';
-    document.getElementById('statPee').textContent='0';
-    document.getElementById('statPoo').textContent='0';
-    document.getElementById('statSleep').textContent='0h';
-    return;
-  }
-
-  // stats
-  const days=history.length;
-  const totalPee=history.reduce((a,d)=>a+(+d.pee||0),0);
-  const totalPoo=history.reduce((a,d)=>a+(+d.poo||0),0);
-  const totalSleep=history.reduce((a,d)=>a+(+d.sleep_min||0),0);
-  const avgSleepMin=Math.round(totalSleep/days);
-  const h=Math.floor(avgSleepMin/60),m=avgSleepMin%60;
-
-  document.getElementById('statDays').textContent=days;
-  document.getElementById('statPee').textContent=Math.round(totalPee/days*10)/10;
-  document.getElementById('statPoo').textContent=Math.round(totalPoo/days*10)/10;
-  document.getElementById('statSleep').textContent=h>0?h+'h'+(m>0?m+'m':''):m+'min';
-
-  // mood chart
-  const mc={'😭 Muito chateada':0,'😐 Neutro':0,'🙂 Bem':0,'😄 Ótima!':0};
-  history.forEach(d=>{if(d.mood&&mc[d.mood]!==undefined)mc[d.mood]++;});
-  const maxM=Math.max(...Object.values(mc),1);
-  const mLabel={'😭 Muito chateada':'😭 Chateada','😐 Neutro':'😐 Neutro','🙂 Bem':'🙂 Bem','😄 Ótima!':'😄 Ótima!'};
-  const mColor={'😭 Muito chateada':'#FDA4AF','😐 Neutro':'#D1D5DB','🙂 Bem':'#86EFAC','😄 Ótima!':'#F472B6'};
-  document.getElementById('moodChart').innerHTML=Object.entries(mc).map(([k,v])=>`
-    <div class="mood-bar">
-      <span class="mood-bar-label">${mLabel[k]}</span>
-      <div style="flex:1;background:#F3F4F6;border-radius:99px;height:12px;overflow:hidden;">
-        <div style="width:${Math.round(v/maxM*100)}%;background:${mColor[k]};height:12px;border-radius:99px;"></div>
-      </div>
-      <span class="mood-bar-count">${v}x</span>
-    </div>`).join('');
-
-  // full list
-  document.getElementById('josiHistList').innerHTML=history.map(d=>`
-    <div class="hist-item">
-      <div class="hist-date">📅 ${d.date} às ${d.time}</div>
-      ${d.mood?`<div class="hist-row"><span>Humor</span><strong>${d.mood}</strong></div>`:''}
-      ${d.feeding?`<div class="hist-row"><span>Alimentação</span><strong>${d.feeding}</strong></div>`:''}
-      ${d.sleep?`<div class="hist-row"><span>Sono</span><strong>${d.sleep}</strong></div>`:''}
-      <div class="hist-row"><span>Fraldas</span><strong>${d.pee} xixi · ${d.poo} cocô</strong></div>
-      ${d.temp?`<div class="hist-row"><span>Temperatura</span><strong>${d.temp}°C</strong></div>`:''}
-      ${d.fever&&d.fever!=='Não mediu'?`<div class="hist-row"><span>Febre</span><strong>${d.fever}</strong></div>`:''}
-      ${d.symptoms?`<div class="hist-row"><span>Sintomas</span><strong>${d.symptoms}</strong></div>`:''}
-      ${d.meds?`<div class="hist-row"><span>Remédios</span><strong>${d.meds}</strong></div>`:''}
-      ${d.activities?`<div class="hist-row"><span>Atividades</span><strong>${d.activities}</strong></div>`:''}
-      ${d.notes?`<div class="hist-row"><span>Obs</span><strong>${d.notes}</strong></div>`:''}
-    </div>`).join('');
-}
-
-// ===== TOAST =====
+// ══ TOAST ══
 let toastTimer;
-function toast(msg) {
+function toast(msg){
   const el=document.getElementById('toast');
-  el.textContent=msg;
-  el.classList.add('show');
+  el.textContent=msg;el.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),2600);
 }
 
-// ===== INIT =====
-setDate();
-loadTema();
-router();
+// ══ INIT ══
+setDate();router();
 </script>
 </body>
 </html>
